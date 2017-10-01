@@ -6,10 +6,16 @@
 #define MPM_TRANSFERP2G_H
 
 #include "Eigen/Eigen"
+#include "interpolation.h"
+#include "global.h"
 
 using namespace Eigen;
 using namespace std;
 
-void transferP2G(vector<Vector3f>& xp, vector<float>& mp, vector<Vector3f>& vp, MatrixXd& gridM, MatrixXd& gridVn);
+void transferP2G(vector<Particle> &particles,vector<Grid> &grids);
+void P2GKernel(Particle &par,Grid &grid);
+
+//void transferP2G(vector<Vector3f>& xp, vector<float>& mp, vector<Vector3f>& vp, vector<Matrix3f>& BMatrix, MatrixXd& gridM, MatrixXd& gridVn);
+//void P2GKernel(Vector3f &xp, Vector3f &mp, Vector3f &vp,Matrix3f B);
 
 #endif //MPM_TRANSFERP2G_H
