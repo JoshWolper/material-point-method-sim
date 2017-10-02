@@ -1,15 +1,22 @@
 //
 // Created by ziyinqu on 10/1/17.
 //
-
-#include "readfile.h"
+#include <string>
+#include "mpmInitialize.h"
+#include "global.h"
 
 int main(){
-    std::string file = "sparseDragonSamples.txt";
-    std::vector<Vector3f> xp;
-    std::vector<Vector3f> vp;
-    readtxt(file, xp);
-    int size = xp.size();
-    vp.resize(size);
+
+    // particles attributes initialize
+    std::string filename = "sparseDragonSamples.txt";
+    std::vector<Particle> particles;
+    float mass = 1.f;
+    mpmParticleInitialize(filename, particles, mass);
+
+    // grid attributes initialize
+    float dx = 0.02f;
+    std::vector<Grid> grid;
+    mpmGridInitialize(grid, dx);
+
     return 0;
 }

@@ -43,6 +43,8 @@ Eigen::Vector3f GradientInterpolationKernel(float pos,int baseNode)
     graInt[0] = -z;
     graInt[1] = -2*d1;
     graInt[2] = zz;
+
+    return graInt;
 }
 
 void QuadraticInterpolation(Eigen::Vector3f particlePointPos, Eigen::Vector3i& baseNode,Eigen::Matrix3f& interpolation,Eigen::Matrix3f& gradientIntp)
@@ -63,10 +65,5 @@ void QuadraticInterpolation(Eigen::Vector3f particlePointPos, Eigen::Vector3i& b
     gradientIntp(0,0)= graIntX[0];gradientIntp(0,1) = graIntX[1];gradientIntp(0,2)=graIntX[2];
     gradientIntp(1,0)= graIntY[0];gradientIntp(1,1) = graIntY[1];gradientIntp(1,2)=graIntY[2];
     gradientIntp(2,0)= graIntZ[0];gradientIntp(2,1) = graIntZ[1];gradientIntp(2,2)=graIntZ[2];
-}
-
-Eigen::Vector3f QuadraticInverseInterpolation(Eigen::Vector3f nodePointPos)
-{
-
 }
 
