@@ -1,16 +1,12 @@
 //
 // Created by ziyinqu on 10/1/17.
 //
-#include "Eigen/Eigen"
-#include "Eigen/src/Core/Matrix.h"
-
 #ifndef MPM_INTERPOLATION_H
 #define MPM_INTERPOLATION_H
 
-#endif //MPM_INTERPOLATION_H
+#include "Eigen/Eigen"
 
-
-Eigen::Vector3f InterpolationKernel(float pos,int& baseNode)
+Eigen::Vector3f calcWeights(float pos, int& baseNode)
 {
     baseNode = std::floor(pos-0.5) + 1;
 
@@ -29,7 +25,8 @@ Eigen::Vector3f InterpolationKernel(float pos,int& baseNode)
 
     return output;
 }
-Eigen::Vector3f GradientInterpolationKernel(float pos,int baseNode)
+
+Eigen::Vector3f calcGradWeights(float pos, int baseNode)
 {
     Eigen::Vector3f graInt;
     float d0 = pos - baseNode + 1;
@@ -47,23 +44,26 @@ Eigen::Vector3f GradientInterpolationKernel(float pos,int baseNode)
     return graInt;
 }
 
-void QuadraticInterpolation(Eigen::Vector3f particlePointPos, Eigen::Vector3i& baseNode,Eigen::Matrix3f& interpolation,Eigen::Matrix3f& gradientIntp)
+void QuadraticInterpolation(Eigen::Vector3f particlePos, Eigen::Vector3i& baseNode, Eigen::Matrix3f& wp, Eigen::Matrix3f& dwp)
 {
 
-    Eigen::Vector3f interX = InterpolationKernel(particlePointPos[0],baseNode[0]);
-    Eigen::Vector3f interY = InterpolationKernel(particlePointPos[1],baseNode[1]);
-    Eigen::Vector3f interZ = InterpolationKernel(particlePointPos[2],baseNode[2]);
+    Eigen::Vector3f interX = calcWeights(particlePos[0], baseNode[0]);
+    Eigen::Vector3f interY = calcWeights(particlePos[1], baseNode[1]);
+    Eigen::Vector3f interZ = calcWeights(particlePos[2], baseNode[2]);
 
-    interpolation(0,0)= interX[0];interpolation(0,1) = interX[1];interpolation(0,2)=interX[2];
-    interpolation(1,0)= interY[0];interpolation(1,1) = interY[1];interpolation(1,2)=interY[2];
-    interpolation(2,0)= interZ[0];interpolation(2,1) = interZ[1];interpolation(2,2)=interZ[2];
+    // calculate weight matrix
+    wp(0,0)= interX[0]; wp(0,1) = interX[1]; wp(0,2)=interX[2];
+    wp(1,0)= interY[0]; wp(1,1) = interY[1]; wp(1,2)=interY[2];
+    wp(2,0)= interZ[0]; wp(2,1) = interZ[1]; wp(2,2)=interZ[2];
 
-    Eigen::Vector3f graIntX = GradientInterpolationKernel(particlePointPos[0],baseNode[0]);
-    Eigen::Vector3f graIntY = GradientInterpolationKernel(particlePointPos[1],baseNode[1]);
-    Eigen::Vector3f graIntZ = GradientInterpolationKernel(particlePointPos[2],baseNode[2]);
+    Eigen::Vector3f graIntX = calcGradWeights(particlePos[0], baseNode[0]);
+    Eigen::Vector3f graIntY = calcGradWeights(particlePos[1], baseNode[1]);
+    Eigen::Vector3f graIntZ = calcGradWeights(particlePos[2], baseNode[2]);
 
-    gradientIntp(0,0)= graIntX[0];gradientIntp(0,1) = graIntX[1];gradientIntp(0,2)=graIntX[2];
-    gradientIntp(1,0)= graIntY[0];gradientIntp(1,1) = graIntY[1];gradientIntp(1,2)=graIntY[2];
-    gradientIntp(2,0)= graIntZ[0];gradientIntp(2,1) = graIntZ[1];gradientIntp(2,2)=graIntZ[2];
+    // calculate gradient weight matrix
+    dwp(0,0)= graIntX[0]; dwp(0,1) = graIntX[1]; dwp(0,2)=graIntX[2];
+    dwp(1,0)= graIntY[0]; dwp(1,1) = graIntY[1]; dwp(1,2)=graIntY[2];
+    dwp(2,0)= graIntZ[0]; dwp(2,1) = graIntZ[1]; dwp(2,2)=graIntZ[2];
 }
 
+#endif //MPM_INTERPOLATION_H

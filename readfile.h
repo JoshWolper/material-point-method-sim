@@ -25,6 +25,8 @@ void readtxt(std::string filename, std::vector<Vector3f>& xp){
         Vector3f thisXp;
         for (int i = 0; i < 3; i++){
             ss >> thisXp(i);
+            // TODO assert data
+            //assert(thisXp(i) > 0 && thisXp(i) < 1);
         }
         xp.push_back(thisXp);
     }

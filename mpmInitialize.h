@@ -1,11 +1,12 @@
 //
 // Created by ziyinqu on 10/1/17.
 //
+#ifndef MPM_MPMINITIALIZE_H
+#define MPM_MPMINITIALIZE_H
+
 #include "readfile.h"
 #include "global.h"
 #include "Eigen/Eigen"
-#ifndef MPM_MPMINITIALIZE_H
-#define MPM_MPMINITIALIZE_H
 
 using namespace Eigen;
 
@@ -22,14 +23,23 @@ void mpmParticleInitialize(std::string filename, std::vector<Particle> &particle
     }
 }
 
-void mpmGridInitialize(std::vector<Grid> &grid, float dx){
-    int grid_size = 1/dx + 1;
-    grid.resize(grid_size);
-    for (int i = 0; i < grid_size; i++){
-        grid[i].massG = 0.f;
-        grid[i].force = Vector3f::Zero();
-        grid[i].velG = Vector3f::Zero();
-        grid[i].velGn = Vector3f::Zero();
+void mpmGridInitialize(std::vector<GridAttr> &gridAttr, GridInfo &gridInfo, Vector3i simArea, float dx){
+    // Initialize grid information
+    gridInfo.dx = dx;
+    //TODO fix type?
+    std::cout << simArea[0] << std::endl;
+    std::cout << simArea(0) << std::endl;
+    gridInfo.W = simArea[0]/dx;
+    gridInfo.H = simArea[1]/dx;
+    gridInfo.L = simArea[2]/dx;
+    gridInfo.gridSize = gridInfo.W * gridInfo.H * gridInfo.L;
+    // Initialize grid attribute
+    gridAttr.resize(gridInfo.gridSize);
+    for (int i = 0; i < gridInfo.gridSize; i++){
+        gridAttr[i].massG = 0.f;
+        gridAttr[i].force = Vector3f::Zero();
+        gridAttr[i].velG = Vector3f::Zero();
+        gridAttr[i].velGn = Vector3f::Zero();
     }
 
 }

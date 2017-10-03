@@ -3,20 +3,37 @@
 //
 #include <string>
 #include "mpmInitialize.h"
-#include "global.h"
+#include "transfer.h"
 
 int main(){
 
+    // MPM simulation parameters setting up
+    float dt = 0.02f;
+    float alpha = 0.95;
+
     // particles attributes initialize
+    float mass = 0.1f;
     std::string filename = "sparseDragonSamples.txt";
     std::vector<Particle> particles;
-    float mass = 1.f;
     mpmParticleInitialize(filename, particles, mass);
 
     // grid attributes initialize
     float dx = 0.02f;
-    std::vector<Grid> grid;
-    mpmGridInitialize(grid, dx);
+    Vector3i simArea = Vector3i::Ones();
+    std::vector<GridAttr> gridAttrs;
+    GridInfo gridInfo;
+    mpmGridInitialize(gridAttrs, gridInfo, simArea, dx);
 
+    // transfer from Particles to Grid
+    transferP2G(particles, gridAttrs, gridInfo);
+
+    //TODO add advection part here
+
+    //TODO add boudnary collision here
+
+    //TODO update deformation gradient here
+
+    // transfer from Grid to particles
+    transferG2P(particles, gridAttrs, gridInfo, dt, alpha);
     return 0;
 }
