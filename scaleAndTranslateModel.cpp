@@ -10,6 +10,8 @@
 #include <ctime>
 #include </../../../../../../usr/include/eigen3/Eigen/Eigen>
 
+using namespace std;
+
 void saveSamples(vector<Vector3f> points);
 
 main(int argc, char* argv[]) {
