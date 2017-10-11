@@ -58,12 +58,12 @@ main(int argc, char* argv[]) {
 
         	Vec3d currPoint = points[i];
 
-       	 	if((min.x() < currPoint.x()) && (min.y() < currPoint.y()) && (min.z() < currPoint.z())){
+       	 	if((min.x() > currPoint.x()) && (min.y() > currPoint.y()) && (min.z() > currPoint.z())){
 
             		min = currPoint;
 
         	}
-        	else if( (max.x() > currPoint.x()) && (max.y() > currPoint.y()) && (max.z() > currPoint.z())){
+        	else if( (max.x() < currPoint.x()) && (max.y() < currPoint.y()) && (max.z() < currPoint.z())){
 
             		max = currPoint;
 
@@ -73,26 +73,37 @@ main(int argc, char* argv[]) {
 
     	Vec3d modelDimensions = max - min;
 
+	double yTranslate = modelDimensions.y()/2;
+
+	//Translate to 0,0,0
+	for(int i = 0; i < points.size(); i++){
+
+        	//points[i] = Vec3d(points[i].x(), points[i].y() - yTranslate, points[i].z()); //shift down in YDimension
+    	}
+	
     	double maxDim = -1;
     	for(int i = 0; i < 3; i++){
 
         	if(modelDimensions[i] > maxDim){
 
-            		maxDim = modelDimensions[i];
+            		maxDim = modelDimensions[i]; //only scale by a proportion of this
 
         	}
 
     	}
 
+	//float scaleFactor = maxDim / 5;
+	float scaleFactor = 22;
 
     	double dx = 0.5;
-    	double dy = 0.6;
+    	double dy = 0.2;
+	double dz = 0.5;
 
     	for(int i = 0; i < points.size(); i++){
 
-        	points[i] = points[i] / maxDim; //scale all points down by the maximum dimension, should make every dimension now between 0 and 1!
+        	points[i] = points[i] / scaleFactor; //scale all points down by the maximum dimension, should make every dimension now between 0 and 1!
 
-        	points[i] = Vec3d(points[i].x() + dx, points[i].y() + dy, points[i].z()); //add the translation based on dy and dx!
+        	points[i] = Vec3d(points[i].x() + dx, points[i].y() + dy, points[i].z() + dz); //add the translation based on dy and dx!
 
     	}
 
