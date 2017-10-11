@@ -2,6 +2,11 @@
 // Created by Josh Wolper on 10/11/17.
 //
 
+#include <openvdb/openvdb.h>
+#include <openvdb/tools/MeshToVolume.h>
+#include <openvdb/tools/Interpolation.h>
+#include <openvdb/points/PointConversion.h>
+#include <openvdb/points/PointCount.h>
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -11,12 +16,13 @@
 #include </../../../../../../usr/include/eigen3/Eigen/Eigen>
 
 using namespace std;
+using namespace openvdb;
 
-void saveSamples(vector<Vector3f> points);
+void saveSamples(vector<Vec3d> points);
 
 main(int argc, char* argv[]) {
 
-    vector<Vector3f> points;
+    vector<Vec3d> points;
 
     if (argc != 2) { // argc should be 2 for correct execution
         // We print argv[0] assuming it is the program name
@@ -38,25 +44,25 @@ main(int argc, char* argv[]) {
             break;
         }
         else{
-            points.push_back(Vector3f(x, y, z));
+            points.push_back(Vec3d(x, y, z));
         }
     }
 
 
-    Vector3f min = Vector3f(-100,-100,-100);
-    Vector3f max = Vector3f(100,100,100);
+    Vec3d min = Vec3d(-100,-100,-100);
+    Vec3d max = Vec3d(100,100,100);
 
     //Now find the min and max of the model
     for(int i = 0; i < points.size(); i++){
 
-        Vector3f currPoint = points[i];
+        Vec3d currPoint = points[i];
 
-        if((min[0] < currPoint[0]) && (min[1] < currPoint[1]) && (min[2] < currPoint[2])){
+        if((min.x() < currPoint.x()) && (min.y() < currPoint.y()) && (min.z() < currPoint.z())){
 
             min = currPoint;
 
         }
-        else if( (max[0] > currPoint[0]) && (max[1] > currPoint[1]) && (max[2] > currPoint[2])){
+        else if( (max.x() > currPoint.x()) && (max.y() > currPoint.y()) && (max.z() > currPoint.z())){
 
             max = currPoint;
 
@@ -64,9 +70,9 @@ main(int argc, char* argv[]) {
 
     }
 
-    Vector3f modelDimensions = max - min;
+    Vec3d modelDimensions = max - min;
 
-    float maxDim = -1;
+    double maxDim = -1;
     for(int i = 0; i < 3; i++){
 
         if(modelDimensions[i] > maxDim){
@@ -78,14 +84,14 @@ main(int argc, char* argv[]) {
     }
 
 
-    float dx = 0.5;
-    float dy = 0.6;
+    double dx = 0.5;
+    double dy = 0.6;
 
     for(int i = 0; i < points.size(); i++){
 
         points[i] = points[i] / maxDim; //scale all points down by the maximum dimension, should make every dimension now between 0 and 1!
 
-        points[i] = Vector3f(points[i][0] + dx, points[i][1] + dy, points[i][2]); //add the translation based on dy and dx!
+        points[i] = Vec3d(points[i].x() + dx, points[i].y() + dy, points[i].z()); //add the translation based on dy and dx!
 
     }
 
@@ -95,7 +101,7 @@ main(int argc, char* argv[]) {
 
 }
 
-void saveSamples(vector<Vector3f> points){
+void saveSamples(vector<Vec3d> points){
 
     //Write to a binary file and a text file
     ofstream outfile;
@@ -104,9 +110,9 @@ void saveSamples(vector<Vector3f> points){
 
     for(int i = 0; i < points.size(); i++){
         double point [3];
-        point[0] = points[i][0];
-        point[1] = points[i][1];
-        point[2] = points[i][2];
+        point[0] = points[i].x();
+        point[1] = points[i].y();
+        point[2] = points[i].z();
         outfile << "v " << point[0] << " " << point[1] << " " << point[2] << "\n";
     }
     outfile.close();
