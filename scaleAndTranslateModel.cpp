@@ -30,74 +30,79 @@ main(int argc, char* argv[]) {
         return 0;
     } else {
         // We assume argv[1] is a filename to open
-        FILE *afile = fopen(argv[1], "r");
+        FILE * afile = fopen(argv[1], "r");
         // Always check to see if file opening succeeded
         if (afile == NULL) {
             cout << "Could not open first file\n";
             return 0;
         }
+
+	float x,y,z;
+
+    	while ( 1 ){
+        	int ret = fscanf(afile, "%f %f %f\n", &x, &y, &z);
+        	if(ret == EOF){
+            		break;
+        	}
+        	else{
+            		points.push_back(Vec3d(x, y, z));
+        	}
+    	}
+
+
+    	Vec3d min = Vec3d(-100,-100,-100);
+    	Vec3d max = Vec3d(100,100,100);
+
+    	//Now find the min and max of the model
+    	for(int i = 0; i < points.size(); i++){
+
+        	Vec3d currPoint = points[i];
+
+       	 	if((min.x() < currPoint.x()) && (min.y() < currPoint.y()) && (min.z() < currPoint.z())){
+
+            		min = currPoint;
+
+        	}
+        	else if( (max.x() > currPoint.x()) && (max.y() > currPoint.y()) && (max.z() > currPoint.z())){
+
+            		max = currPoint;
+
+        	}
+
+    	}
+
+    	Vec3d modelDimensions = max - min;
+
+    	double maxDim = -1;
+    	for(int i = 0; i < 3; i++){
+
+        	if(modelDimensions[i] > maxDim){
+
+            		maxDim = modelDimensions[i];
+
+        	}
+
+    	}
+
+
+    	double dx = 0.5;
+    	double dy = 0.6;
+
+    	for(int i = 0; i < points.size(); i++){
+
+        	points[i] = points[i] / maxDim; //scale all points down by the maximum dimension, should make every dimension now between 0 and 1!
+
+        	points[i] = Vec3d(points[i].x() + dx, points[i].y() + dy, points[i].z()); //add the translation based on dy and dx!
+
+    	}
+
+    	saveSamples(points);
+
     }
 
-    while ( 1 ){
-        int ret = fscanf(afile, "%f %f %f\n", &x, &y, &z);
-        if(ret == EOF){
-            break;
-        }
-        else{
-            points.push_back(Vec3d(x, y, z));
-        }
-    }
+    
 
-
-    Vec3d min = Vec3d(-100,-100,-100);
-    Vec3d max = Vec3d(100,100,100);
-
-    //Now find the min and max of the model
-    for(int i = 0; i < points.size(); i++){
-
-        Vec3d currPoint = points[i];
-
-        if((min.x() < currPoint.x()) && (min.y() < currPoint.y()) && (min.z() < currPoint.z())){
-
-            min = currPoint;
-
-        }
-        else if( (max.x() > currPoint.x()) && (max.y() > currPoint.y()) && (max.z() > currPoint.z())){
-
-            max = currPoint;
-
-        }
-
-    }
-
-    Vec3d modelDimensions = max - min;
-
-    double maxDim = -1;
-    for(int i = 0; i < 3; i++){
-
-        if(modelDimensions[i] > maxDim){
-
-            maxDim = modelDimensions[i];
-
-        }
-
-    }
-
-
-    double dx = 0.5;
-    double dy = 0.6;
-
-    for(int i = 0; i < points.size(); i++){
-
-        points[i] = points[i] / maxDim; //scale all points down by the maximum dimension, should make every dimension now between 0 and 1!
-
-        points[i] = Vec3d(points[i].x() + dx, points[i].y() + dy, points[i].z()); //add the translation based on dy and dx!
-
-    }
-
-    saveSamples(points);
-
-    return;
+    return 0;
 
 }
 
