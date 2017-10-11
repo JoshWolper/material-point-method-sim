@@ -4,18 +4,20 @@
 #include <string>
 #include "mpmInitialize.h"
 #include "transfer.h"
-
-void saveParticles(vector<Vector3f> points);
+#include "advection.h"
+#include "writeframe.h"
 
 int main(){
 
     // MPM simulation parameters setting up
     float dt = 0.02f;
     float alpha = 0.95;
+    Vector3f gravity = Vector3f(0, 0, -9.8f);
+    std::vector<int> active_nodes;
 
     // particles attributes initialize
     float mass = 0.1f;
-    std::string filename = "sparseDragonSamples.txt";
+    std::string filename = "Models/sparseDragonSamples.txt";
     std::vector<Particle> particles;
     mpmParticleInitialize(filename, particles, mass);
 
@@ -27,10 +29,13 @@ int main(){
     mpmGridInitialize(gridAttrs, gridInfo, simArea, dx);
 
     // transfer from Particles to Grid
-    transferP2G(particles, gridAttrs, gridInfo);
+    transferP2G(particles, gridAttrs, gridInfo, active_nodes);
 
-    //TODO add advection part here
+    // advection part, add forces and update grid velocity
+    addGravity(gridAttrs, active_nodes, gravity);
 
+    updateGridvelocity(gridAttrs, active_nodes, dt);
+    
     //TODO add boudnary collision here
 
     //TODO update deformation gradient here
@@ -41,31 +46,9 @@ int main(){
     //Save the particles!
     vector<Vector3f> points;
     for(int i = 0; i < particles.size(); i++){
-	points.push_back(particles[i].posP); //add the positions to the points list!
+	    points.push_back(particles[i].posP); //add the positions to the points list!
     }
     saveParticles(points); //call the saving routine
 
     return 0;
-}
-
-void saveParticles(vector<Vector3f> points){
-
-    //Write to an object file
-    ofstream outfile;
-    
-    //later we'll want a second parameter, timeStep to make it spit out diferently named files!
-    //String filename = "sim_t=" + itos(
-
-    outfile.open("simOut.obj");
-
-    for(int i = 0; i < points.size(); i++){
-        double point [3];
-        point[0] = points[i][0];
-        point[1] = points[i][1];
-        point[2] = points[i][2];
-        outfile << "v " << point[0] << " " << point[1] << " " << point[2] << "\n";
-    }
-    outfile.close();
-
-    return;
 }

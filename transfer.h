@@ -11,7 +11,7 @@
 
 using namespace std;
 
-void transferG2P(vector<Particle> &particles, vector<GridAttr> &gridAttrs, const GridInfo gridInfo, float dt, float alpha){
+void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const GridInfo gridInfo, float dt, float alpha){
     int iterationNum = particles.size();
     Matrix3f wp;
     Matrix3f dwp;
@@ -45,7 +45,7 @@ void transferG2P(vector<Particle> &particles, vector<GridAttr> &gridAttrs, const
     }
 }
 
-void transferP2G(vector<Particle> &particles, vector<GridAttr> &gridAttrs, const GridInfo gridInfo)
+void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const GridInfo gridInfo, std::vector<int>& active_nodes)
 {
     int iterationNum = particles.size();
     Matrix3f wp;
@@ -78,6 +78,7 @@ void transferP2G(vector<Particle> &particles, vector<GridAttr> &gridAttrs, const
 
     for (int iter = 0; iter < gridAttrs.size(); iter++){
         if (gridAttrs[iter].massG != 0){
+            active_nodes.push_back(iter);
             gridAttrs[iter].velGn = gridAttrs[iter].velGn / gridAttrs[iter].massG ;
         }
     }
