@@ -1,5 +1,4 @@
 cmake-build-debug/
-*.txt
 *.vdb
 test
 .idea/
