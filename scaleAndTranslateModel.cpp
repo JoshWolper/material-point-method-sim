@@ -8,8 +8,9 @@
 #include <vector>
 #include <stdlib.h>
 #include <ctime>
-//#include <Eigen/Eigen>
 #include </../../../../../../usr/include/eigen3/Eigen/Eigen>
+
+void saveSamples(vector<Vector3f> points);
 
 main(int argc, char* argv[]) {
 
