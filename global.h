@@ -1,6 +1,7 @@
 //
 // Created by VElysianP on 10/1/2017.
 //
+#pragma once
 #ifndef MATERIAL_POINT_METHOD_SIM_GLOBAL_H
 #define MATERIAL_POINT_METHOD_SIM_GLOBAL_H
 

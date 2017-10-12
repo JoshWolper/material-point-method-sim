@@ -1,18 +1,19 @@
 //
 // Created by ziyinqu on 10/1/17.
 //
+#pragma once
 #ifndef MPM_INTERPOLATION_H
 #define MPM_INTERPOLATION_H
 
 #include "Eigen/Eigen"
 
-inline Eigen::Vector3f calcWeights(float pos, int& baseNode)
+Eigen::Vector3f calcWeights(float index_space, int& baseNode)
 {
-    baseNode = std::floor(pos-0.5) + 1;
+    baseNode = std::floor(index_space-0.5);
 
     Eigen::Vector3f output;
 
-    float d0 = pos - baseNode+1; // 0.5<d0<1.5
+    float d0 = index_space - baseNode; // 0.5<d0<1.5
     float z = 1.5 - d0;
     output[0] = 0.5 * z * z;
 
@@ -26,10 +27,11 @@ inline Eigen::Vector3f calcWeights(float pos, int& baseNode)
     return output;
 }
 
-inline Eigen::Vector3f calcGradWeights(float pos, int baseNode)
+Eigen::Vector3f calcGradWeights(float index_space, int baseNode)
 {
     Eigen::Vector3f graInt;
-    float d0 = pos - baseNode + 1;
+
+    float d0 = index_space - baseNode;
     float z = 1.5 - d0;
 
     float d1 = d0 - 1;
