@@ -35,7 +35,7 @@ int main(){
     addGravity(gridAttrs, active_nodes, gravity);
 
     updateGridvelocity(gridAttrs, active_nodes, dt);
-    
+
     //TODO add boudnary collision here
 
     //TODO update deformation gradient here
