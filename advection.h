@@ -13,7 +13,7 @@ using namespace std;
 inline void addGravity(vector<GridAttr>& gridAttrs, vector<int>& active_nodes, Vector3f gravity){
     for (int i = 0; i < active_nodes.size(); i++){
         int index = active_nodes[i];
-        gridAttrs[index].force = gridAttrs[index].force + gravity * gridAttrs[index].massG;
+        gridAttrs[index].force = gridAttrs[index].force + gridAttrs[index].massG * gravity;
     }
 }
 

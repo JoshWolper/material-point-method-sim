@@ -6,7 +6,7 @@
 
 #include "Eigen/Eigen"
 
-Eigen::Vector3f calcWeights(float pos, int& baseNode)
+inline Eigen::Vector3f calcWeights(float pos, int& baseNode)
 {
     baseNode = std::floor(pos-0.5) + 1;
 
@@ -26,7 +26,7 @@ Eigen::Vector3f calcWeights(float pos, int& baseNode)
     return output;
 }
 
-Eigen::Vector3f calcGradWeights(float pos, int baseNode)
+inline Eigen::Vector3f calcGradWeights(float pos, int baseNode)
 {
     Eigen::Vector3f graInt;
     float d0 = pos - baseNode + 1;
@@ -44,7 +44,7 @@ Eigen::Vector3f calcGradWeights(float pos, int baseNode)
     return graInt;
 }
 
-void QuadraticInterpolation(Eigen::Vector3f particlePos, Eigen::Vector3i& baseNode, Eigen::Matrix3f& wp, Eigen::Matrix3f& dwp)
+inline void QuadraticInterpolation(Eigen::Vector3f particlePos, Eigen::Vector3i& baseNode, Eigen::Matrix3f& wp, Eigen::Matrix3f& dwp)
 {
 
     Eigen::Vector3f interX = calcWeights(particlePos[0], baseNode[0]);
