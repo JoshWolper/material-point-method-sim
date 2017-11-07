@@ -11,9 +11,11 @@ using namespace Eigen;
 
 struct Particle{
     float massP;
+    float volumeP;
     Vector3f posP;
     Vector3f velP;
     Matrix3f BP;
+    Matrix3f F;
 };
 
 struct GridAttr{

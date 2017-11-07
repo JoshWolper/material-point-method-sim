@@ -18,9 +18,10 @@ int main(){
 
     // particles attributes initialize
     float mass = 0.1f;
+    float volume = 0.1f;
     std::string filename = "Models/sparseDragonTranslated.obj";
     std::vector<Particle> particles;
-    mpmParticleInitialize(filename, particles, mass);
+    mpmParticleInitialize(filename, particles, mass, volume);
 
     // grid attributes initialize
     float dx = 0.04f;
@@ -40,6 +41,10 @@ int main(){
 
         // advection part, add forces and update grid velocity
         addGravity(gridAttrs, active_nodes, gravity);
+
+        //Add external forces based on our defined energy density function
+        int energyDensityFunction = 0; //define which density function we wish to use!
+        addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
 
         updateGridvelocity(gridAttrs, active_nodes, dt);
 
