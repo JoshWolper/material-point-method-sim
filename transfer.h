@@ -126,7 +126,7 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
 
 }
 
-inline void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
+void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
     float mu = 0.5;
     float lambda = 0.5;
@@ -147,7 +147,7 @@ inline void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
     return;
 }
 
-inline void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
+void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
     float mu = 0.5;
     float lambda = 0.5;
@@ -168,7 +168,7 @@ inline void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
     return;
 }
 
-inline void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
+void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
     float mu = 0.5;
     float lambda = 0.5;
@@ -197,7 +197,7 @@ inline void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
     return;
 }
 
-inline void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, GridInfo gridInfo, int energyDensityFunction) {
+void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, GridInfo gridInfo, int energyDensityFunction) {
 
     //for each active grid node
     for (int i = 0; i < particles.size(); i++){
