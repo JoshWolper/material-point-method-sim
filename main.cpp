@@ -7,7 +7,7 @@
 #include "advection.h"
 #include "writeframe.h"
 #include "setBoundaryVelocity.h"
-//#include "UpdateF.h"
+#include "UpdateF.h"
 
 int main(){
 
@@ -54,7 +54,7 @@ int main(){
 
         //update deformation gradient here
         //TODO add loop over particles in UpdateF
-        //UpdateF(dt, gridInfo, gridAttrs, particles);
+        UpdateF(dt, gridInfo, gridAttrs, particles[0]);
 
         // transfer from Grid to particles
         transferG2P(particles, gridAttrs, gridInfo, dt, alpha);

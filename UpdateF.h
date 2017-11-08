@@ -35,7 +35,7 @@ void UpdateF(int timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs, 
 
     Matrix3f Fp = particle.F;
 
-    Matrix3f grad_vp = Matrix3f(0.0f);
+    Matrix3f grad_vp = Matrix3f::Zero();
 
     for(int k = baseNode(2); k <= baseNode(2)+2 ; k++)
     {
@@ -44,7 +44,7 @@ void UpdateF(int timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs, 
             for(int i = baseNode(0); i <= baseNode(0)+2;i++)
             {
                 int tempNodeIndex = i * gridInfo.H * gridInfo.L + j * gridInfo.L + k ;
-                Vector3i tempNodeLength = Vector3f(i,j,k) - baseNode;
+                Vector3i tempNodeLength = Vector3i(i,j,k) - baseNode;
 
                 Vector3f dwip = Vector3f(dwp(0,tempNodeLength(0))*wp(1,tempNodeLength(1))*wp(2,tempNodeLength(2)),
                 wp(0,tempNodeLength(0))*dwp(1,tempNodeLength(1))*wp(2,tempNodeLength(2)),
