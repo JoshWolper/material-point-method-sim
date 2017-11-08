@@ -15,7 +15,6 @@ int main(){
     float alpha = 0;
     Vector3f gravity = Vector3f(0, -9.8, 0);
 
-
     // particles attributes initialize
     float mass = 0.1f;
     float volume = 0.1f;

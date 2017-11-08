@@ -15,7 +15,6 @@
 #define USEAPIC true
 
 using namespace std;
-#define USEAPIC true
 
 void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const GridInfo gridInfo, float dt, float alpha){
 
