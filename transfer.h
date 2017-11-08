@@ -103,12 +103,6 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
                     } else{
                         gridAttrs[index].velGn += wijk*particles[i].massP * particles[i].velP;
 
-                    if(USEAPIC) {
-                        gridAttrs[index].velGn += wijk * particles[iter].massP * (particles[iter].velP + plus);
-                    } else{
-                        gridAttrs[index].velGn += wijk * particles[iter].massP * particles[iter].velP;
-                    }
-
                 }
             }
         }
