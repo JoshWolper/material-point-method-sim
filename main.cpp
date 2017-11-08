@@ -35,6 +35,7 @@ int main(){
     cout << "INFO: >>>>>>>>>>>>>>> Simulation Start! <<<<<<<<<<<<<<< " << endl;
     while (step != 15) {
         cout << "INFO: Current simulation step is " << step << endl;
+        mpmGridReinitialize(gridAttrs, gridInfo);
         std::vector<int> active_nodes;
         // transfer from Particles to Grid
         transferP2G(particles, gridAttrs, gridInfo, active_nodes);
@@ -44,7 +45,7 @@ int main(){
 
         //Add external forces based on our defined energy density function
         int energyDensityFunction = 0; //define which density function we wish to use!
-        addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
+        //addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
 
         updateGridvelocity(gridAttrs, active_nodes, dt);
 

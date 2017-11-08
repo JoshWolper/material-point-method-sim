@@ -19,9 +19,9 @@ inline void addGravity(vector<GridAttr>& gridAttrs, vector<int> active_nodes, Ve
 inline void updateGridvelocity(vector<GridAttr>& gridAttrs, vector<int> active_nodes, float dt){
     for (int i = 0; i < active_nodes.size(); i++){
         int index = active_nodes[i];
-        //Vector3f test = gridAttrs[index].force / gridAttrs[index].massG;
-        //gridAttrs[index].velG = gridAttrs[index].velGn + dt * gridAttrs[index].force / gridAttrs[index].massG;
-        gridAttrs[index].velG = Vector3f(0,-1,0);
+        Vector3f test = gridAttrs[index].force / gridAttrs[index].massG;
+        gridAttrs[index].velG = gridAttrs[index].velGn + dt * gridAttrs[index].force / gridAttrs[index].massG;
+        //gridAttrs[index].velG = Vector3f(0,-1,0);
     }
 }
 

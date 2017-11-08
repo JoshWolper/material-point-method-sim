@@ -9,7 +9,7 @@
 #include "Eigen/Eigen"
 #include "interpolation.h"
 
-#define USEAPIC true
+#define USEAPIC false
 
 using namespace std;
 
