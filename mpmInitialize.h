@@ -50,4 +50,12 @@ void mpmGridInitialize(std::vector<GridAttr> &gridAttr, GridInfo &gridInfo, Vect
     std::cout << "INFO: >>>>>>>>>>>>>>> MPM Initialization Ends <<<<<<<<<<<<<<< " << std::endl;
 }
 
+void mpmGridReinitialize(std::vector<GridAttr> &gridAttr, GridInfo &gridInfo){
+    for (int i = 0; i < gridInfo.gridSize; i++){
+        gridAttr[i].massG = 0.f;
+        gridAttr[i].force = Vector3f::Zero();
+        gridAttr[i].velG = Vector3f::Zero();
+        gridAttr[i].velGn = Vector3f::Zero();
+    }
+}
 #endif //MPM_MPMINITIALIZE_H

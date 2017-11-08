@@ -12,7 +12,7 @@
 #include "SVD.h"
 #include <math.h>
 
-#define USEAPIC true
+#define USEAPIC false
 
 using namespace std;
 
