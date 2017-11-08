@@ -9,7 +9,7 @@
 
 using namespace std;
 
-inline void addGravity(vector<GridAttr>& gridAttrs, vector<int> active_nodes, Vector3f gravity){
+void addGravity(vector<GridAttr>& gridAttrs, vector<int> active_nodes, Vector3f gravity){
     for (int i = 0; i < active_nodes.size(); i++){
         int index = active_nodes[i];
         gridAttrs[index].force = gridAttrs[index].force + gridAttrs[index].massG * gravity ;
@@ -17,7 +17,7 @@ inline void addGravity(vector<GridAttr>& gridAttrs, vector<int> active_nodes, Ve
     }
 }
 
-inline void updateGridvelocity(vector<GridAttr>& gridAttrs, vector<int> active_nodes, float dt){
+void updateGridvelocity(vector<GridAttr>& gridAttrs, vector<int> active_nodes, float dt){
     for (int i = 0; i < active_nodes.size(); i++){
         int index = active_nodes[i];
         Vector3f test = gridAttrs[index].force / gridAttrs[index].massG;

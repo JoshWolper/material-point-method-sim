@@ -25,7 +25,7 @@ using namespace Eigen;
 //this is the kernel function that only process one Fp update
 //it is different from the MATLAB version of update all the Fps together
 //target: update the Fp inside the particle
-void UpdataF(int timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs, Particle& particle)
+void UpdateF(int timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs, Particle& particle)
 {
     Vector3f particlePos = particle.posP/gridInfo.dx;
     Vector3i baseNode;

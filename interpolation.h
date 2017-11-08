@@ -46,7 +46,7 @@ Eigen::Vector3f calcGradWeights(float index_space, int baseNode)
     return graInt;
 }
 
-inline void QuadraticInterpolation(Eigen::Vector3f particlePos, Eigen::Vector3i& baseNode, Eigen::Matrix3f& wp, Eigen::Matrix3f& dwp)
+void QuadraticInterpolation(Eigen::Vector3f particlePos, Eigen::Vector3i& baseNode, Eigen::Matrix3f& wp, Eigen::Matrix3f& dwp)
 {
 
     Eigen::Vector3f interX = calcWeights(particlePos[0], baseNode[0]);

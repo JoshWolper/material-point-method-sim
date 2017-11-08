@@ -9,6 +9,13 @@
 
 using namespace Eigen;
 
+struct SVDResult
+{
+    Eigen::Matrix3f U;
+    Eigen::Matrix3f SIGMA;
+    Eigen::Matrix3f V;
+};
+
 struct Particle{
     float massP;
     float volumeP;

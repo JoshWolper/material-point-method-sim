@@ -7,6 +7,7 @@
 #include "advection.h"
 #include "writeframe.h"
 #include "setBoundaryVelocity.h"
+//#include "UpdateF.h"
 
 int main(){
 
@@ -44,14 +45,16 @@ int main(){
 
         //Add external forces based on our defined energy density function
         int energyDensityFunction = 0; //define which density function we wish to use!
-        //addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
+        addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
 
         updateGridvelocity(gridAttrs, active_nodes, dt);
 
         // boundary collision
         setBoundaryVelocity(gridAttrs, gridInfo);
 
-        //TODO update deformation gradient here
+        //update deformation gradient here
+        //TODO add loop over particles in UpdateF
+        //UpdateF(dt, gridInfo, gridAttrs, particles);
 
         // transfer from Grid to particles
         transferG2P(particles, gridAttrs, gridInfo, dt, alpha);

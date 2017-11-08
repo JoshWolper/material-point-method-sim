@@ -11,17 +11,10 @@
 #include "Eigen/Dense"
 #include "Eigen/src/SVD/JacobiSVD.h"
 #include "Eigen/LU"
+#include "global.h"
 
 
 using namespace Eigen;
-
-//put this struct into global.h
-struct SVDResult
-{
-    Eigen::Matrix3f U;
-    Eigen::Matrix3f SIGMA;
-    Eigen::Matrix3f V;
-};
 
 SVDResult SingularValueDecomposition3D(Matrix3f F)
 {

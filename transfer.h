@@ -73,17 +73,16 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
     Vector3i baseNode = Vector3i::Zero();
     int H = gridInfo.H;
     int L = gridInfo.L;
-    for(int iter =0; iter < iterationNum; iter++)
-    {
-        Vector3f index_Space = particles[iter].posP/gridInfo.dx;
+    for(int iter =0; iter < iterationNum; iter++) {
+        Vector3f index_Space = particles[iter].posP / gridInfo.dx;
         QuadraticInterpolation(index_Space, baseNode, wp, dwp);
-        for (int i = 0; i < 3; i++){
-            float wi = wp(0,i);
+        for (int i = 0; i < 3; i++) {
+            float wi = wp(0, i);
             int node_i = baseNode(0) + i;
-            for (int j = 0; j < 3; j++){
-                float wij = wi * wp(1,j);
+            for (int j = 0; j < 3; j++) {
+                float wij = wi * wp(1, j);
                 int node_j = baseNode(1) + j;
-                for (int k = 0; k < 3; k++){
+                for (int k = 0; k < 3; k++) {
                     float wijk = wij * wp(2, k);
                     int node_k = baseNode(2) + k;
                     int index = node_i * H * L + node_j * L + node_k;
@@ -93,16 +92,16 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
                     // calculate APIC things
                     // grid velocity transfer
                     //TODO APIC transfer should apply here
-                    Vector3f gridNode = Vector3f(node_i,node_j,node_k);
-                    Vector3f index_Space = particles[iter].posP/gridInfo.dx;
-                    Vector3f plus = 4*particles[i].BP*(gridNode-index_Space);
+                    Vector3f gridNode = Vector3f(node_i, node_j, node_k);
+                    Vector3f index_Space = particles[iter].posP / gridInfo.dx;
+                    Vector3f plus = 4 * particles[i].BP * (gridNode - index_Space);
 
-                    if(USEAPIC)
-                    {
-                        gridAttrs[index].velGn += wijk*particles[i].massP * (particles[i].velP + plus);
-                    } else{
-                        gridAttrs[index].velGn += wijk*particles[i].massP * particles[i].velP;
+                    if (USEAPIC) {
+                        gridAttrs[index].velGn += wijk * particles[i].massP * (particles[i].velP + plus);
+                    } else {
+                        gridAttrs[index].velGn += wijk * particles[i].massP * particles[i].velP;
 
+                    }
                 }
             }
         }
