@@ -27,7 +27,7 @@ using namespace Eigen;
 //target: update the Fp inside the particle
 void UpdataF(int timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs, Particle& particle)
 {
-    Vector3f particlePos = particle.posP;
+    Vector3f particlePos = particle.posP/gridInfo.dx;
     Vector3i baseNode;
     Matrix3f wp;
     Matrix3f dwp;
