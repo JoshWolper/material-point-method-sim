@@ -26,23 +26,5 @@ inline void updateGridvelocity(vector<GridAttr>& gridAttrs, vector<int> active_n
     }
 }
 
-inline void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, GridInfo gridInfo, int energyDensityFunction) {
-
-    //for each active grid node
-    for (int i = 0; i < particles.size(); i++){
-        //calculate force update
-        float volume = particles[i].volumeP;
-        Matrix3f defGrad = particles[i].F;
-        float h = gridInfo.dx;
-
-        //Calculate Piola Kirchoff Stress
-
-
-        //Loop through each of the 27 grid nodes
-            //Calculate gradW_ip for each of the grid nodes
-            //Calculate f_i for each node
-            //Add f_i to the node
-    }
-}
 
 #endif //MPM_ADVECTION_H

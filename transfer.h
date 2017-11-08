@@ -9,6 +9,8 @@
 #include "Eigen/Eigen"
 #include "Eigen/Dense"
 #include "interpolation.h"
+#include "SVD.h"
+#include <math.h>
 
 #define USEAPIC true
 
@@ -124,4 +126,127 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
     }
 
 }
+
+inline void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
+
+    float mu = 0.5;
+    float lambda = 0.5;
+
+    SVDResult svdResult = SingularValueDecomposition3D(defGrad);
+
+    Matrix3f U, sigma, V;
+    U = svdResult.U;
+    sigma = svdResult.SIGMA;
+    V = svdResult.V;
+
+    Matrix3f R = U * V.transpose();
+
+    float J = defGrad.determinant();
+
+    piola = (2 * mu * (defGrad - R)) + (lambda * (J-1) * J * (defGrad.transpose().inverse()));
+
+    return;
+}
+
+inline void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
+
+    float mu = 0.5;
+    float lambda = 0.5;
+
+    SVDResult svdResult = SingularValueDecomposition3D(defGrad);
+
+    Matrix3f U, sigma, V;
+    U = svdResult.U;
+    sigma = svdResult.SIGMA;
+    V = svdResult.V;
+
+    Matrix3f R = U * V.transpose();
+
+    float J = defGrad.determinant();
+
+    piola = (mu * (defGrad - defGrad.transpose())) + (lambda * log(J) * defGrad.transpose().inverse());
+
+    return;
+}
+
+inline void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
+
+    float mu = 0.5;
+    float lambda = 0.5;
+
+    SVDResult svdResult = SingularValueDecomposition3D(defGrad);
+
+    Matrix3f U, sigma, V;
+    U = svdResult.U;
+    sigma = svdResult.SIGMA;
+    V = svdResult.V;
+
+    Matrix3f R = U * V.transpose();
+
+    float J = defGrad.determinant();
+
+    Matrix3f logSigma = Matrix3f::Zero();
+    logSigma(0,0) = log(sigma(0,0));
+    logSigma(1,1) = log(sigma(1,1));
+    logSigma(2,2) = log(sigma(2,2));
+
+    Matrix3f piolaSingular = (2 * mu * logSigma * sigma.inverse()) + (lambda * logSigma.trace() * sigma.inverse()); //calculate singular value view of piola
+
+    //now calculate actual P!
+    piola = U * piolaSingular * V.transpose();
+
+    return;
+}
+
+inline void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, GridInfo gridInfo, int energyDensityFunction) {
+
+    //for each active grid node
+    for (int i = 0; i < particles.size(); i++){
+        //calculate force update
+        float volume = particles[i].volumeP;
+        Matrix3f defGrad = particles[i].F;
+        float h = gridInfo.dx;
+
+        //Calculate Piola Kirchoff Stress
+        Matrix3f piola = Matrix3f::Ones();
+
+        switch(energyDensityFunction){
+            case 0: corotatedPiola(defGrad, piola);
+            case 1: neoHookeanPiola(defGrad, piola);
+            case 2: stVernantPiola(defGrad, piola);
+            default: corotatedPiola(defGrad, piola); //default should just be the corotated model
+        }
+
+        Vector3f pos = particles[i].posP;
+        Vector3i baseNode;
+        Matrix3f wp = Matrix3f::Ones();
+        Matrix3f dwp = Matrix3f::Ones();
+
+        QuadraticInterpolation(pos, baseNode, wp, dwp); //get Wp and gradWp
+
+        //Loop through each of the 27 grid nodes
+        for(int r = 0; r < 3; r++){
+            for(int s = 0; s < 3; s++){
+                for(int t = 0; t < 3; t++) {
+
+                    Vector3f gradWip;
+                    gradWip(0) = (1/h) * dwp(0,r) * wp(1, s) * wp(2, t); //calculate each component of gradWip
+                    gradWip(1) = (1/h) * wp(0,r) * dwp(1, s) * wp(2, t);
+                    gradWip(2) = (1/h) * wp(0,r) * wp(1, s) * dwp(2, t);
+
+                    Vector3f f_i = -1 * volume * piola * defGrad * gradWip; //calc force update
+
+                    int x = baseNode(0) + r; //calculate the indeces of the node we're acting on
+                    int y = baseNode(1) + s;
+                    int z = baseNode(2) + t;
+                    int index = (x * gridInfo.H * gridInfo.L) + (y * gridInfo.L) + z;
+                    gridAttrs[index].force = gridAttrs[index].force + f_i; //add the force
+
+                }
+            }
+        }
+    }
+}
+
+
 #endif //MPM_TRANSFER_H

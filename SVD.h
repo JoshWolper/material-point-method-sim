@@ -30,7 +30,11 @@ SVDResult SingularValueDecomposition3D(Matrix3f F)
     Matrix3f tempU = svd.matrixU();
     Matrix3f tempV = svd.matrixV();
 
-    Matrix3f tempSigma = svd.singularValues();
+    Vector3f singVals = svd.singularValues();
+    Matrix3f tempSigma = Matrix3f::Zero();
+    tempSigma(0,0) = singVals(0);
+    tempSigma(1,1) = singVals(1);
+    tempSigma(2,2) = singVals(2);
 
     //sorting
     if(tempU.determinant()<0)
