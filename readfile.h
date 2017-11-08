@@ -1,14 +1,15 @@
 //
 // Created by ziyinqu on 10/1/17.
 //
+#pragma once
+#ifndef MPM_READFILE_H
+#define MPM_READFILE_H
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include "Eigen/Eigen"
-
-#ifndef MPM_READFILE_H
-#define MPM_READFILE_H
 
 using namespace Eigen;
 
@@ -23,10 +24,13 @@ void readtxt(std::string filename, std::vector<Vector3f>& xp){
     while(std::getline(inputfile, line)){
         std::stringstream ss(line);
         Vector3f thisXp;
-        for (int i = 0; i < 3; i++){
-            ss >> thisXp(i);
-            //TODO assert data
-            //assert(thisXp(i) > 0 && thisXp(i) < 1);
+        if (line[0] == 'v'){
+            ss.ignore();
+            for (int i = 0; i < 3; i++){
+                ss >> thisXp(i);
+                //TODO assert data
+                //assert(thisXp(i) > 0 && thisXp(i) < 1);
+            }
         }
         xp.push_back(thisXp);
     }

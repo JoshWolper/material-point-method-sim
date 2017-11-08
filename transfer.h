@@ -1,7 +1,7 @@
 //
 // Created by ziyinqu on 10/2/17.
 //
-
+#pragma once
 #ifndef MPM_TRANSFER_H
 #define MPM_TRANSFER_H
 
@@ -10,35 +10,39 @@
 #include "Eigen/Dense"
 #include "interpolation.h"
 
+#define USEAPIC true
+
 using namespace std;
 #define USEAPIC true
 
 void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const GridInfo gridInfo, float dt, float alpha){
 
     int iterationNum = particles.size();
-    Matrix3f wp;
-    Matrix3f dwp;
-    Vector3i baseNode;
-    Vector3f vpic;
-    Vector3f vflip;
+    Matrix3f wp = Matrix3f::Zero();
+    Matrix3f dwp = Matrix3f::Zero();
+    Vector3i baseNode = Vector3i::Zero();
     int H = gridInfo.H;
     int L = gridInfo.L;
+
     for(int iter =0; iter < iterationNum; iter++) {
-        QuadraticInterpolation(particles[iter].posP, baseNode, wp, dwp);
+        Vector3f vpic = Vector3f::Zero();
+        Vector3f vflip = Vector3f::Zero();
+        Vector3f index_Space = particles[iter].posP/gridInfo.dx;
+        QuadraticInterpolation(index_Space, baseNode, wp, dwp);
         for (int i = 0; i < 3; i++) {
             float wi = wp(0, i);
-            int node_i = baseNode(0) + (i - 1);
+            int node_i = baseNode(0) + i;
             for (int j = 0; j < 3; j++) {
                 float wij = wi * wp(1, j);
-                int node_j = baseNode(1) + (j - 1);
+                int node_j = baseNode(1) + j;
                 for (int k = 0; k < 3; k++) {
                     float wijk = wij * wp(2, k);
-                    int node_k = baseNode(2) + (k - 1);
+                    int node_k = baseNode(2) + k;
                     int index = node_i * H * L + node_j * L + node_k;
-                    Vector3f gridIndex = Vector3f(node_i,node_j,node_k);
-                    Vector3f index_Space = particles[iter].posP/gridInfo.dx;
 
-                    particles[iter].BP = particles[iter].BP+wij*gridAttrs[index].velG*(gridIndex.transpose()-index_Space.transpose());
+                    Vector3f gridIndex = Vector3f(node_i,node_j,node_k);
+                    particles[iter].BP += wijk * gridAttrs[index].velG * (gridIndex.transpose() - index_Space.transpose());
+
                     // calculate PIC and FLIP part velocity
                     vpic += wijk * gridAttrs[index].velG;
                     vflip += wijk * (gridAttrs[index].velG - gridAttrs[index].velGn);
@@ -46,6 +50,7 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
             }
         }
         // update particles velocity and position
+
         if(!USEAPIC)
         {
             particles[iter].velP = (1 - alpha) * vpic + alpha * vflip;
@@ -62,26 +67,29 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
 void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const GridInfo gridInfo, std::vector<int>& active_nodes)
 {
     int iterationNum = particles.size();
-    Matrix3f wp;
-    Matrix3f dwp;
-    Vector3i baseNode;
+    Matrix3f wp = Matrix3f::Zero();
+    Matrix3f dwp = Matrix3f::Zero();
+    Vector3i baseNode = Vector3i::Zero();
     int H = gridInfo.H;
     int L = gridInfo.L;
     for(int iter =0; iter < iterationNum; iter++)
     {
-        QuadraticInterpolation(particles[iter].posP, baseNode, wp, dwp);
+        Vector3f index_Space = particles[iter].posP/gridInfo.dx;
+        QuadraticInterpolation(index_Space, baseNode, wp, dwp);
         for (int i = 0; i < 3; i++){
             float wi = wp(0,i);
-            int node_i = baseNode(0) + (i-1);
+            int node_i = baseNode(0) + i;
             for (int j = 0; j < 3; j++){
-                float wij = wi*wp(1,j);
-                int node_j = baseNode(1) + (j-1);
+                float wij = wi * wp(1,j);
+                int node_j = baseNode(1) + j;
                 for (int k = 0; k < 3; k++){
-                    float wijk = wij*wp(2,k);
-                    int node_k = baseNode(2) + (k-1);
-                    int index = node_i*H*L + node_j*L + node_k;
+                    float wijk = wij * wp(2, k);
+                    int node_k = baseNode(2) + k;
+                    int index = node_i * H * L + node_j * L + node_k;
                     // grid mass transfer
-                    gridAttrs[index].massG += particles[i].massP * wijk;
+                    gridAttrs[index].massG += wijk * particles[iter].massP;
+
+                    // calculate APIC things
                     // grid velocity transfer
                     //TODO APIC transfer should apply here
                     Vector3f gridNode = Vector3f(node_i,node_j,node_k);
@@ -93,6 +101,11 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
                         gridAttrs[index].velGn += wijk*particles[i].massP * (particles[i].velP + plus);
                     } else{
                         gridAttrs[index].velGn += wijk*particles[i].massP * particles[i].velP;
+
+                    if(USEAPIC) {
+                        gridAttrs[index].velGn += wijk * particles[iter].massP * (particles[iter].velP + plus);
+                    } else{
+                        gridAttrs[index].velGn += wijk * particles[iter].massP * particles[iter].velP;
                     }
 
                 }
@@ -104,6 +117,9 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
         if (gridAttrs[iter].massG != 0){
             active_nodes.push_back(iter);
             gridAttrs[iter].velGn = gridAttrs[iter].velGn / gridAttrs[iter].massG ;
+        }
+        else{
+            gridAttrs[iter].velGn = Vector3f::Zero();
         }
     }
 

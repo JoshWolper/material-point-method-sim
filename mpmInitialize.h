@@ -1,6 +1,7 @@
 //
 // Created by ziyinqu on 10/1/17.
 //
+#pragma once
 #ifndef MPM_MPMINITIALIZE_H
 #define MPM_MPMINITIALIZE_H
 
@@ -10,16 +11,21 @@
 
 using namespace Eigen;
 
-void mpmParticleInitialize(std::string filename, std::vector<Particle> &particles, float mass){
+void mpmParticleInitialize(std::string filename, std::vector<Particle> &particles, float mass, float volume){
     std::vector<Vector3f> xp;
     readtxt(filename, xp);
     int part_number = xp.size();
+    std::cout << "INFO: >>>>>>>>>>>>>>> MPM Initialization <<<<<<<<<<<<<<<" << std::endl;
+    std::cout << "INFO: Particle number is " << part_number << std::endl;
     particles.resize(part_number);
     for (int i = 0; i < part_number; i++){
         particles[i].posP = xp[i];
-        particles[i].velP = Vector3f::Zero();
+        //particles[i].velP = Vector3f::Zero();
+        particles[i].velP = Vector3f(0,-1,0);
         particles[i].massP = mass;
+        particles[i].volumeP = volume;
         particles[i].BP = Matrix3f::Zero();
+        particles[i].F = Matrix3f::Identity();
     }
 }
 
@@ -27,12 +33,12 @@ void mpmGridInitialize(std::vector<GridAttr> &gridAttr, GridInfo &gridInfo, Vect
     // Initialize grid information
     gridInfo.dx = dx;
     //TODO fix type?
-    std::cout << simArea[0] << std::endl;
-    std::cout << simArea(0) << std::endl;
-    gridInfo.W = simArea[0]/dx;
-    gridInfo.H = simArea[1]/dx;
-    gridInfo.L = simArea[2]/dx;
+    std::cout << "INFO: Simulation area is " << simArea[0] << "*" << simArea[1] << "*" << simArea[2]  << std::endl;
+    gridInfo.W = simArea[0]/dx + 1;
+    gridInfo.H = simArea[1]/dx + 1;
+    gridInfo.L = simArea[2]/dx + 1;
     gridInfo.gridSize = gridInfo.W * gridInfo.H * gridInfo.L;
+    std::cout << "INFO: Grid number is " << gridInfo.gridSize << std::endl;
     // Initialize grid attribute
     gridAttr.resize(gridInfo.gridSize);
     for (int i = 0; i < gridInfo.gridSize; i++){
@@ -41,7 +47,7 @@ void mpmGridInitialize(std::vector<GridAttr> &gridAttr, GridInfo &gridInfo, Vect
         gridAttr[i].velG = Vector3f::Zero();
         gridAttr[i].velGn = Vector3f::Zero();
     }
-
+    std::cout << "INFO: >>>>>>>>>>>>>>> MPM Initialization Ends <<<<<<<<<<<<<<< " << std::endl;
 }
 
 #endif //MPM_MPMINITIALIZE_H

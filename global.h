@@ -1,6 +1,7 @@
 //
 // Created by VElysianP on 10/1/2017.
 //
+#pragma once
 #ifndef MATERIAL_POINT_METHOD_SIM_GLOBAL_H
 #define MATERIAL_POINT_METHOD_SIM_GLOBAL_H
 
@@ -10,9 +11,11 @@ using namespace Eigen;
 
 struct Particle{
     float massP;
+    float volumeP;
     Vector3f posP;
     Vector3f velP;
     Matrix3f BP;
+    Matrix3f F;
 };
 
 struct GridAttr{
