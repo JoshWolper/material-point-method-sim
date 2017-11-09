@@ -12,7 +12,9 @@
 int main(){
 
     // MPM simulation parameters setting up
-    float dt = 0.02f; //50 FPS
+    float dt = 1e-3f; //50 FPS
+    float frameRate = 24;
+    int stepsPerFrame = ceil(1 / (dt / (1/frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
     float alpha = 0;
     Vector3f gravity = Vector3f(0, -9.8, 0);
 
@@ -33,8 +35,9 @@ int main(){
 
     // start simulation
     int step = 0;
+    int frame = 0;
     cout << "INFO: >>>>>>>>>>>>>>> Simulation Start! <<<<<<<<<<<<<<< " << endl;
-    while (step != 40) {
+    while (step != 1000) {
         cout << "INFO: Current simulation step is " << step << endl;
         mpmGridReinitialize(gridAttrs, gridInfo);
         std::vector<int> active_nodes;
@@ -59,12 +62,16 @@ int main(){
         // transfer from Grid to particles
         transferG2P(particles, gridAttrs, gridInfo, dt, alpha);
 
-        //Save the particles!
-        vector<Vector3f> points;
-        for (int i = 0; i < particles.size(); i++) {
-            points.push_back(particles[i].posP); //add the positions to the points list!
+        if(step % stepsPerFrame == 0) {
+            //Save the particles!
+            vector<Vector3f> points;
+            for (int i = 0; i < particles.size(); i++) {
+                points.push_back(particles[i].posP); //add the positions to the points list!
+            }
+            saveFrame(points, frame); //call the saving routine
+            frame = frame + 1;
         }
-        saveParticles(points, step); //call the saving routine
+
         step = step + 1;
     }
     return 0;
