@@ -18,7 +18,7 @@ using namespace Eigen;
 
 SVDResult SingularValueDecomposition3D(Matrix3f F)
 {
-    Eigen::JacobiSVD<Eigen::Matrix3f> svd(F, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    Eigen::JacobiSVD<Eigen::Matrix3f> svd(F, Eigen::ComputeFullU | Eigen::ComputeFullV);
     SVDResult result;
     Matrix3f tempU = svd.matrixU();
     Matrix3f tempV = svd.matrixV();

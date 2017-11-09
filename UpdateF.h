@@ -50,9 +50,9 @@ void UpdateF(int timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs, 
                     int tempNodeIndex = i * gridInfo.H * gridInfo.L + j * gridInfo.L + k ;
                     Vector3i tempNodeLength = Vector3i(i,j,k) - baseNode;
 
-                    Vector3f dwip = Vector3f(dwp(0,tempNodeLength(0))*wp(1,tempNodeLength(1))*wp(2,tempNodeLength(2)),
-                                             wp(0,tempNodeLength(0))*dwp(1,tempNodeLength(1))*wp(2,tempNodeLength(2)),
-                                             wp(0,tempNodeLength(0))*wp(1,tempNodeLength(1))*dwp(2,tempNodeLength(2)));
+                    Vector3f dwip = Vector3f((1/gridInfo.dx) * dwp(0,tempNodeLength(0))*wp(1,tempNodeLength(1))*wp(2,tempNodeLength(2)),
+                                             (1/gridInfo.dx) * wp(0,tempNodeLength(0))*dwp(1,tempNodeLength(1))*wp(2,tempNodeLength(2)),
+                                             (1/gridInfo.dx) * wp(0,tempNodeLength(0))*wp(1,tempNodeLength(1))*dwp(2,tempNodeLength(2)));
 
                     Vector3f tempVel = gridAttrs[tempNodeIndex].velG;
                     grad_vp += tempVel * dwip.transpose();

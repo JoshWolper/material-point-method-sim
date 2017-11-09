@@ -12,19 +12,20 @@
 int main(){
 
     // MPM simulation parameters setting up
-    float dt = 0.02f;
+    float dt = 0.02f; //50 FPS
     float alpha = 0;
-    Vector3f gravity = Vector3f(0, -9.8, 0);
+    Vector3f gravity = Vector3f(0, 0, 0);
 
     // particles attributes initialize
     float mass = 0.1f;
     float volume = 0.1f;
-    std::string filename = "Models/sparseDragonTranslated.obj";
+    //std::string filename = "../Models/VeryDenseCube.obj";
+    std::string filename = "../Models/newestSmallSparseDragon_Nov8.obj";
     std::vector<Particle> particles;
     mpmParticleInitialize(filename, particles, mass, volume);
 
     // grid attributes initialize
-    float dx = 0.04f;
+    float dx = 0.02f;
     Vector3i simArea = Vector3i::Ones();
     std::vector<GridAttr> gridAttrs;
     GridInfo gridInfo;
@@ -33,7 +34,7 @@ int main(){
     // start simulation
     int step = 0;
     cout << "INFO: >>>>>>>>>>>>>>> Simulation Start! <<<<<<<<<<<<<<< " << endl;
-    while (step != 15) {
+    while (step != 30) {
         cout << "INFO: Current simulation step is " << step << endl;
         mpmGridReinitialize(gridAttrs, gridInfo);
         std::vector<int> active_nodes;
@@ -53,8 +54,7 @@ int main(){
         setBoundaryVelocity(gridAttrs, gridInfo);
 
         //update deformation gradient here
-        //TODO add loop over particles in UpdateF
-        UpdateF(dt, gridInfo, gridAttrs, particles[0]);
+        UpdateF(dt, gridInfo, gridAttrs, particles);
 
         // transfer from Grid to particles
         transferG2P(particles, gridAttrs, gridInfo, dt, alpha);

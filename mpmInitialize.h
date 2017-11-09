@@ -21,11 +21,14 @@ void mpmParticleInitialize(std::string filename, std::vector<Particle> &particle
     for (int i = 0; i < part_number; i++){
         particles[i].posP = xp[i];
         //particles[i].velP = Vector3f::Zero();
-        particles[i].velP = Vector3f(0,-1,0);
+        particles[i].velP = Vector3f(0,0,0);
         particles[i].massP = mass;
         particles[i].volumeP = volume;
         particles[i].BP = Matrix3f::Zero();
         particles[i].F = Matrix3f::Identity();
+        particles[i].F(0,0) = 1.2; //TODO: change this back to identity eventually!
+        particles[i].F(1,1) = 1.2;
+        particles[i].F(2,2) = 1.2;
     }
 }
 

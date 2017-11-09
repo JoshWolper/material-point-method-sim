@@ -121,8 +121,11 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
 
 void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
-    float mu = 0.5;
-    float lambda = 0.5;
+    float E = 500000;
+    float nu = 0.3;
+
+    float mu = E / (2 * (1 + nu));
+    float lambda = E * nu / ((1 + nu) * (1 - (2*nu)));
 
     SVDResult svdResult = SingularValueDecomposition3D(defGrad);
 
@@ -142,8 +145,11 @@ void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
 void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
-    float mu = 0.5;
-    float lambda = 0.5;
+    float E = 500000;
+    float nu = 0.3;
+
+    float mu = E / (2 * (1 + nu));
+    float lambda = E * nu / ((1 + nu) * (1 - (2*nu)));
 
     SVDResult svdResult = SingularValueDecomposition3D(defGrad);
 
@@ -163,8 +169,11 @@ void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
 void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
-    float mu = 0.5;
-    float lambda = 0.5;
+    float E = 500000;
+    float nu = 0.3;
+
+    float mu = E / (2 * (1 + nu));
+    float lambda = E * nu / ((1 + nu) * (1 - (2*nu)));
 
     SVDResult svdResult = SingularValueDecomposition3D(defGrad);
 
@@ -191,6 +200,10 @@ void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 }
 
 void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, GridInfo gridInfo, int energyDensityFunction) {
+    //for (int i = 0; i < gridInfo.gridSize; i++){
+    //    gridAttrs[i].force = Vector3f::Zero();
+    //    cout << "Force: " << gridAttrs[i].force.transpose() << endl;
+    //}
 
     //for each active grid node
     for (int i = 0; i < particles.size(); i++){
@@ -209,7 +222,7 @@ void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, Gri
             default: corotatedPiola(defGrad, piola); //default should just be the corotated model
         }
 
-        Vector3f pos = particles[i].posP;
+        Vector3f pos = particles[i].posP / gridInfo.dx;
         Vector3i baseNode;
         Matrix3f wp = Matrix3f::Ones();
         Matrix3f dwp = Matrix3f::Ones();
@@ -226,7 +239,13 @@ void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, Gri
                     gradWip(1) = (1/h) * wp(0,r) * dwp(1, s) * wp(2, t);
                     gradWip(2) = (1/h) * wp(0,r) * wp(1, s) * dwp(2, t);
 
-                    Vector3f f_i = -1 * volume * piola * defGrad * gradWip; //calc force update
+                    //cout << "Piola: " << piola << endl;
+                    //cout << "defGrad: " << defGrad << endl;
+                    //cout << "GradWip: " << gradWip << endl;
+
+                    Vector3f f_i = -1 * volume * piola * defGrad.transpose() * gradWip; //calc force update
+
+                    //cout << "f_i: " << gradWip.transpose() << endl;
 
                     int x = baseNode(0) + r; //calculate the indeces of the node we're acting on
                     int y = baseNode(1) + s;
@@ -237,7 +256,15 @@ void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, Gri
                 }
             }
         }
+
     }
+    /*
+    for(int i = 0; i < gridInfo.gridSize; i++){
+        if(std::abs(gridAttrs[i].force(0)) > 1e-10 || std::abs(gridAttrs[i].force(1)) > 1e-10 || std::abs(gridAttrs[i].force(2)) > 1e-10){
+            cout << "Force: " << gridAttrs[i].force.transpose() << endl;
+            //cout << flush;
+        }
+    }*/
 }
 
 
