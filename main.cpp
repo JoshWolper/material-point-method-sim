@@ -54,8 +54,10 @@ int main(){
     Vector3f gravity = Vector3f(0, -9.8, 0);
 
     // particles attributes initialize
-    float mass = 0.1f;
-    float volume = 0.1f;
+    float density = 1.0f;
+    int numPoints = 3653; //points in sparse cube
+    float mass = (((float)1/(float)27)*density) / numPoints;
+    float volume = ((float)1/(float)27) / numPoints;
     //std::string filename = "../Models/VeryDenseCube.obj";
     std::string filename = "../Models/newSparseCube_Nov9.obj";
     std::vector<Particle> particles;
@@ -109,6 +111,6 @@ int main(){
 
         step = step + 1;
     }
-    
+
     return 0;
 }
