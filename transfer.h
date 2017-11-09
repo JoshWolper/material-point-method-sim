@@ -119,13 +119,46 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
 
 }
 
+void corotatedPiola(const Matrix3d& defGrad, double& energy, Eigen::Matrix3d& piola){
+
+    double E = 10;
+    double nu = 0.3;
+
+    double lambda = E * nu / (((double)1 + nu) * ((double)1 - (double)2 * nu));
+    double mu = E / ((double)2 * ((double)1 + nu));
+
+    //cout << "DefGrad: " << defGrad << endl;
+
+    SVDResultDouble svdResult = SingularValueDecomposition3DDouble(defGrad);
+
+    Matrix3d U, sigma, V;
+    U = svdResult.U;
+    sigma = svdResult.SIGMA;
+    V = svdResult.V;
+
+    //cout << "U: " << U << endl;
+    //cout << "Sigma: " << sigma << endl;
+    //cout << "V: " << V << endl;
+
+    Matrix3d R = U * V.transpose();
+
+    double J = defGrad.determinant();
+
+    piola = (2 * mu * (defGrad - R)) + (lambda * (J-1) * J * (defGrad.inverse().transpose()));
+
+    energy = mu * (defGrad - R).squaredNorm() + (lambda / 2) * (J - 1) * (J - 1);
+
+
+    return;
+}
+
 void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
-    float E = 500000;
+    float E = 10;
     float nu = 0.3;
 
-    float mu = E / (2 * (1 + nu));
-    float lambda = E * nu / ((1 + nu) * (1 - (2*nu)));
+    float lambda = E * nu / (((float)1 + nu) * ((float)1 - (float)2 * nu));
+    float mu = E / ((float)2 * ((float)1 + nu));
 
     //cout << "DefGrad: " << defGrad << endl;
 
