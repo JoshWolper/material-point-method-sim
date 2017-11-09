@@ -32,16 +32,16 @@ SVDResult SingularValueDecomposition3D(Matrix3f F)
     //sorting
     if(tempU.determinant()<0)
     {
-        tempU(2,0) *= -1;
-        tempU(2,1) *= -1;
+        tempU(0,2) *= -1;
+        tempU(1,2) *= -1;
         tempU(2,2) *= -1;
         tempSigma(2,2) *= -1;
     }
 
     if(tempV.determinant()<0)
     {
-        tempV(2,0) *= -1;
-        tempV(2,1) *= -1;
+        tempV(0,2) *= -1;
+        tempV(1,2) *= -1;
         tempV(2,2) *= -1;
         tempSigma(2,2) *= -1;
     }

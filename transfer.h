@@ -127,6 +127,8 @@ void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
     float mu = E / (2 * (1 + nu));
     float lambda = E * nu / ((1 + nu) * (1 - (2*nu)));
 
+    //cout << "DefGrad: " << defGrad << endl;
+
     SVDResult svdResult = SingularValueDecomposition3D(defGrad);
 
     Matrix3f U, sigma, V;
@@ -134,11 +136,17 @@ void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
     sigma = svdResult.SIGMA;
     V = svdResult.V;
 
+    //cout << "U: " << U << endl;
+    //cout << "Sigma: " << sigma << endl;
+    //cout << "V: " << V << endl;
+
     Matrix3f R = U * V.transpose();
 
     float J = defGrad.determinant();
 
     piola = (2 * mu * (defGrad - R)) + (lambda * (J-1) * J * (defGrad.transpose().inverse()));
+
+
 
     return;
 }

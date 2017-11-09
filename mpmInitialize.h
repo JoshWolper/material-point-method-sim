@@ -26,9 +26,15 @@ void mpmParticleInitialize(std::string filename, std::vector<Particle> &particle
         particles[i].volumeP = volume;
         particles[i].BP = Matrix3f::Zero();
         particles[i].F = Matrix3f::Identity();
-        particles[i].F(0,0) = 1.0; //TODO: change this back to identity eventually!
-        particles[i].F(1,1) = 1.0;
-        particles[i].F(2,2) = 1.0;
+        /*particles[i].F(0,0) = 1.0; //TODO: change this back to identity eventually!
+        particles[i].F(0,1) = 2.0;
+        particles[i].F(0,2) = 3.0;
+        particles[i].F(1,0) = 4.0; //TODO: change this back to identity eventually!
+        particles[i].F(1,1) = 5.0;
+        particles[i].F(1,2) = 6.0;
+        particles[i].F(2,0) = 7.0; //TODO: change this back to identity eventually!
+        particles[i].F(2,1) = 8.0;
+        particles[i].F(2,2) = 9.0;*/
     }
 }
 
