@@ -16,6 +16,13 @@ struct SVDResult
     Eigen::Matrix3f V;
 };
 
+struct SVDResultDouble
+{
+    Eigen::Matrix3d U;
+    Eigen::Matrix3d SIGMA;
+    Eigen::Matrix3d V;
+};
+
 struct Particle{
     float massP;
     float volumeP;
