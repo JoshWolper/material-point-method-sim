@@ -10,7 +10,7 @@
 #include "UpdateF.h"
 #include "Test/kernelTest.h"
 
-#define SANITYCHECK true
+#define SANITYCHECK false
 int main(){
 
     if (SANITYCHECK){
@@ -18,10 +18,9 @@ int main(){
     }
     else {
         // MPM simulation parameters setting up
-        float dt = 1e-3f; //50 FPS
+        float dt = 2e-3f; //50 FPS
         float frameRate = 24;
-        int stepsPerFrame = ceil(1 / (dt / (1 /
-                                            frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
+        int stepsPerFrame = (int)ceil(1 / (dt / (1 / frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
         float alpha = 0;
         Vector3f gravity = Vector3f(0, 0, 0);
 
@@ -73,13 +72,12 @@ int main(){
 
             if (step % stepsPerFrame == 0) {
                 //Save the particles!
-                vector<Vector3f> points;
-                for (int i = 0; i < particles.size(); i++) {
-                    points.push_back(particles[i].posP); //add the positions to the points list!
-                }
-                saveFrame(points, frame); //call the saving routine
+                cout << "INFO: Current Frame is " << frame << endl;
+                saveFrame(particles, frame); //call the saving routine
                 frame = frame + 1;
             }
+                //Save the particles!
+//                saveStep(particles, step); //call the saving routine
 
             step = step + 1;
         }

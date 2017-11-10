@@ -20,8 +20,7 @@ void mpmParticleInitialize(std::string filename, std::vector<Particle> &particle
     particles.resize(part_number);
     for (int i = 0; i < part_number; i++){
         particles[i].posP = xp[i];
-        //particles[i].velP = Vector3f::Zero();
-        particles[i].velP = Vector3f(0,0,0);
+        particles[i].velP = Vector3f::Zero();
         particles[i].massP = mass;
         particles[i].volumeP = volume;
         particles[i].BP = Matrix3f::Zero();
