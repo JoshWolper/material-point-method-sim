@@ -38,9 +38,11 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
                     float wijk = wij * wp(2, k);
                     int node_k = baseNode(2) + k;
                     int index = node_i * H * L + node_j * L + node_k;
-
                     Vector3f gridIndex = Vector3f(node_i,node_j,node_k);
-                    particles[iter].BP += wijk * gridAttrs[index].velG * (gridIndex.transpose() - index_Space.transpose());
+
+                    if(USEAPIC) {
+                        particles[iter].BP += wijk * gridAttrs[index].velG * (gridIndex - index_Space).transpose();
+                    }
 
                     // calculate PIC and FLIP part velocity
                     vpic += wijk * gridAttrs[index].velG;
@@ -87,14 +89,10 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
                     // grid mass transfer
                     gridAttrs[index].massG += wijk * particles[iter].massP;
 
-                    // calculate APIC things
                     // grid velocity transfer
-                    //TODO APIC transfer should apply here
-                    Vector3f gridNode = Vector3f(node_i, node_j, node_k);
-                    Vector3f index_Space = particles[iter].posP / gridInfo.dx;
-                    Vector3f plus = 4 * particles[i].BP * (gridNode - index_Space);
-
                     if (USEAPIC) {
+                        Vector3f gridNode = Vector3f(node_i, node_j, node_k);
+                        Vector3f plus = 4 * particles[i].BP * (gridNode - index_Space);
                         gridAttrs[index].velGn += wijk * particles[i].massP * (particles[i].velP + plus);
                     } else {
                         gridAttrs[index].velGn += wijk * particles[i].massP * particles[i].velP;
@@ -106,7 +104,8 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
     }
 
     for (int iter = 0; iter < gridAttrs.size(); iter++){
-        if (gridAttrs[iter].massG != 0){
+        float epsilon = 1e-5;
+        if (gridAttrs[iter].massG > epsilon){
             active_nodes.push_back(iter);
             gridAttrs[iter].velGn = gridAttrs[iter].velGn / gridAttrs[iter].massG ;
         }

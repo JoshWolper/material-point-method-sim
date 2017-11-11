@@ -56,6 +56,7 @@ void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs
                                              (1/gridInfo.dx) * wp(0,tempNodeLength(0))*wp(1,tempNodeLength(1))*dwp(2,tempNodeLength(2)));
 
                     Vector3f tempVel = gridAttrs[tempNodeIndex].velG;
+                    //TODO: bottleneck
                     grad_vp += tempVel * dwip.transpose();
                 }
             }
