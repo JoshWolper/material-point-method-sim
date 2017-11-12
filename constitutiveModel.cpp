@@ -62,9 +62,18 @@ void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
     Matrix3f R = U * V.transpose();
 
     float J = defGrad.determinant();
-
+    Matrix3f JFinvT;
+//    JFinvT(0, 0) = defGrad(1, 1) * defGrad(2, 2) - defGrad(1, 2) * defGrad(2, 1);
+//    JFinvT(0, 1) = defGrad(1, 2) * defGrad(2, 0) - defGrad(1, 0) * defGrad(2, 2);
+//    JFinvT(0, 2) = defGrad(1, 0) * defGrad(2, 1) - defGrad(1, 1) * defGrad(2, 0);
+//    JFinvT(1, 0) = defGrad(0, 2) * defGrad(2, 1) - defGrad(0, 1) * defGrad(2, 2);
+//    JFinvT(1, 1) = defGrad(0, 0) * defGrad(2, 2) - defGrad(0, 2) * defGrad(2, 0);
+//    JFinvT(1, 2) = defGrad(0, 1) * defGrad(2, 0) - defGrad(0, 0) * defGrad(2, 1);
+//    JFinvT(2, 0) = defGrad(0, 1) * defGrad(1, 2) - defGrad(0, 2) * defGrad(1, 1);
+//    JFinvT(2, 1) = defGrad(0, 2) * defGrad(1, 0) - defGrad(0, 0) * defGrad(1, 2);
+//    JFinvT(2, 2) = defGrad(0, 0) * defGrad(1, 1) - defGrad(0, 1) * defGrad(1, 0);
     piola = (2 * mu * (defGrad - R)) + (lambda * (J-1) * J * (defGrad.transpose().inverse()));
-
+//    piola = (2 * mu * (defGrad - R)) + (lambda * (J-1) * JFinvT);
     return;
 }
 

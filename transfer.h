@@ -25,7 +25,7 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
 
     for(int iter =0; iter < iterationNum; iter++) {
         Vector3f vpic = Vector3f::Zero();
-        Vector3f vflip = Vector3f::Zero();
+        Vector3f vflip = particles[iter].velP;
         Vector3f index_Space = particles[iter].posP/gridInfo.dx;
         QuadraticInterpolation(index_Space, baseNode, wp, dwp);
         for (int i = 0; i < 3; i++) {
@@ -38,9 +38,9 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
                     float wijk = wij * wp(2, k);
                     int node_k = baseNode(2) + k;
                     int index = node_i * H * L + node_j * L + node_k;
-                    Vector3f gridIndex = Vector3f(node_i,node_j,node_k);
 
                     if(USEAPIC) {
+                        Vector3f gridIndex = Vector3f(node_i,node_j,node_k);
                         particles[iter].BP += wijk * gridAttrs[index].velG * (gridIndex - index_Space).transpose();
                     }
 
@@ -52,16 +52,14 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
         }
         // update particles velocity and position
 
-        if(!USEAPIC)
-        {
-            particles[iter].velP = (1 - alpha) * vpic + alpha * vflip;
-        }
-        else
-        {
+        if(USEAPIC) {
             particles[iter].velP = vpic;
         }
-
-        particles[iter].posP += dt * particles[iter].velP;
+        else {
+            particles[iter].velP = (1 - alpha) * vpic + alpha * vflip;
+        }
+        //TODO: position update should use vp or vpic?
+        particles[iter].posP += dt * vpic;
     }
 }
 

@@ -12,7 +12,7 @@
 #include <ctime>
 
 #define SANITYCHECK false
-
+#define TIMER false
 int main(){
 
     if (SANITYCHECK){
@@ -23,8 +23,8 @@ int main(){
         float dt = 1e-3f; //50 FPS
         float frameRate = 24;
         int stepsPerFrame = (int)ceil(1 / (dt / (1 / frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
-        float alpha = 0;
-        Vector3f gravity = Vector3f(0, 0, 0);
+        float alpha = 0.95;
+        Vector3f gravity = Vector3f(-10, -10, -10);
 
         // particles attributes initialize
         float density = 1.0f;
@@ -62,12 +62,12 @@ int main(){
             p2gduration = ( std::clock() - p2gstart ) / (double) CLOCKS_PER_SEC;
 
             // advection part, add forces and update grid velocity
-            //addGravity(gridAttrs, active_nodes, gravity);
+            addGravity(gridAttrs, active_nodes, gravity);
 
             //Add external forces based on our defined energy density function
             forcestart = std::clock();
             int energyDensityFunction = 0; //define which density function we wish to use!
-            addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
+            //addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
             forceduration = ( std::clock() - forcestart ) / (double) CLOCKS_PER_SEC;
 
             updatestart = std::clock();
@@ -79,7 +79,7 @@ int main(){
 
             //update deformation gradient here
             updatefstart = std::clock();
-            UpdateF(dt, gridInfo, gridAttrs, particles);
+            //UpdateF(dt, gridInfo, gridAttrs, particles);
             updatefduration = ( std::clock() - updatefstart ) / (double) CLOCKS_PER_SEC;
 
             // transfer from Grid to particles
@@ -100,12 +100,14 @@ int main(){
             step = step + 1;
             // output time calculation
             duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-            cout << "      P2G time is: " << p2gduration << endl;
-            cout << "      UPV time is: " << updateduration << endl;
-            cout << "      FRC time is: " << forceduration << endl;
-            cout << "      UPF time is: " << updatefduration << endl;
-            cout << "      G2P time is: " << g2pduration << endl;
-            cout << "      overall time is: " << duration << endl;
+            if (TIMER){
+                cout << "      P2G time is: " << p2gduration << endl;
+                cout << "      UPV time is: " << updateduration << endl;
+                cout << "      FRC time is: " << forceduration << endl;
+                cout << "      UPF time is: " << updatefduration << endl;
+                cout << "      G2P time is: " << g2pduration << endl;
+                cout << "      overall time is: " << duration << endl;
+            }
         }
     }
 

@@ -50,6 +50,9 @@ void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, Gri
                 for(int t = 0; t < 3; t++) {
 
                     Vector3f gradWip;
+                    float dwpx = dwp(0,r);
+                    float wpy = wp(1,s);
+                    float wpz = wp(2,t);
                     gradWip(0) = (1/h) * dwp(0,r) * wp(1, s) * wp(2, t); //calculate each component of gradWip
                     gradWip(1) = (1/h) * wp(0,r) * dwp(1, s) * wp(2, t);
                     gradWip(2) = (1/h) * wp(0,r) * wp(1, s) * dwp(2, t);
@@ -61,7 +64,7 @@ void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, Gri
                     //TODO: bottleneck
                     Vector3f f_i = -1 * volume * piola * defGrad.transpose() * gradWip; //calc force update
 
-                    //cout << "f_i: " << gradWip.transpose() << endl;
+                    //cout << "f_i: " << f_i.transpose() << endl;
 
                     int x = baseNode(0) + r; //calculate the indeces of the node we're acting on
                     int y = baseNode(1) + s;
@@ -79,7 +82,8 @@ void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, Gri
 void updateGridvelocity(vector<GridAttr>& gridAttrs, vector<int> active_nodes, float dt){
     for (int i = 0; i < active_nodes.size(); i++){
         int index = active_nodes[i];
-        gridAttrs[index].velG = gridAttrs[index].velGn + dt * gridAttrs[index].force / gridAttrs[index].massG;
+        Vector3f deltav = dt * gridAttrs[index].force / gridAttrs[index].massG;
+        gridAttrs[index].velG = gridAttrs[index].velGn + deltav;
     }
 }
 
