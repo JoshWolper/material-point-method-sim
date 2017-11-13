@@ -8,6 +8,7 @@
 #include "writeframe.h"
 #include "setBoundaryVelocity.h"
 #include "UpdateF.h"
+#include "computeMomentum.h"
 #include "Test/kernelTest.h"
 #include <ctime>
 
@@ -23,8 +24,8 @@ int main(){
         float dt = 1e-3f; //50 FPS
         float frameRate = 24;
         int stepsPerFrame = (int)ceil(1 / (dt / (1 / frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
-        float alpha = 0.95;
-        Vector3f gravity = Vector3f(-10, -10, -10);
+        float alpha = 0;
+        Vector3f gravity = Vector3f(0, 0, 0);
 
         // particles attributes initialize
         float density = 1.0f;
@@ -37,7 +38,7 @@ int main(){
         mpmParticleInitialize(filename, particles, mass, volume);
 
         // grid attributes initialize
-        float dx = 0.02f;
+        float dx = 0.04f;
         Vector3i simArea = Vector3i::Ones();
         std::vector<GridAttr> gridAttrs;
         GridInfo gridInfo;
@@ -58,16 +59,19 @@ int main(){
             std::vector<int> active_nodes;
             // transfer from Particles to Grid
             p2gstart = std::clock();
+            Vector3f Lpp2g = computeParticleMomentum(particles);
             transferP2G(particles, gridAttrs, gridInfo, active_nodes);
+            Vector3f Lgp2g = computeGridMomentum(gridAttrs, false);
+            cout << "      P2G Momentum Difference: " << (Lgp2g - Lpp2g).transpose() << endl;
             p2gduration = ( std::clock() - p2gstart ) / (double) CLOCKS_PER_SEC;
 
             // advection part, add forces and update grid velocity
-            addGravity(gridAttrs, active_nodes, gravity);
+            //addGravity(gridAttrs, active_nodes, gravity);
 
             //Add external forces based on our defined energy density function
             forcestart = std::clock();
             int energyDensityFunction = 0; //define which density function we wish to use!
-            //addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
+            addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
             forceduration = ( std::clock() - forcestart ) / (double) CLOCKS_PER_SEC;
 
             updatestart = std::clock();
@@ -75,7 +79,7 @@ int main(){
             updateduration = ( std::clock() - updatestart ) / (double) CLOCKS_PER_SEC;
 
             // boundary collision
-            setBoundaryVelocity(gridAttrs, gridInfo);
+            //setBoundaryVelocity(gridAttrs, gridInfo);
 
             //update deformation gradient here
             updatefstart = std::clock();
@@ -84,7 +88,10 @@ int main(){
 
             // transfer from Grid to particles
             g2pstart = std::clock();
+            Vector3f Lgg2p = computeGridMomentum(gridAttrs, true);
             transferG2P(particles, gridAttrs, gridInfo, dt, alpha);
+            Vector3f Lpg2p = computeParticleMomentum(particles);
+            cout << "      G2P Momentum Difference: " << (Lgg2p - Lpg2p).transpose() << endl;
             g2pduration = ( std::clock() - g2pstart ) / (double) CLOCKS_PER_SEC;
 
 

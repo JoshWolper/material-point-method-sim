@@ -3,6 +3,6 @@ project(MPM)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp main.cpp advection.h interpolation.h writeframe.h readfile.h mpmInitialize.h transfer.h global.h setBoundaryVelocity.h UpdateF.h SVD.h constitutiveModel.h Test/derivativeTest.cpp Test/derivativeTest.h Test/kernelTest.cpp Test/kernelTest.h interpolation.cpp constitutiveModel.cpp SVD.cpp)
+set(SOURCE_FILES main.cpp main.cpp advection.h interpolation.h writeframe.h readfile.h mpmInitialize.h transfer.h global.h setBoundaryVelocity.h UpdateF.h SVD.h constitutiveModel.h Test/derivativeTest.cpp Test/derivativeTest.h Test/kernelTest.cpp Test/kernelTest.h interpolation.cpp constitutiveModel.cpp SVD.cpp computeMomentum.h)
 
 add_executable(MPM ${SOURCE_FILES})

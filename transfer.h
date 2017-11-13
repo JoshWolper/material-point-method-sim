@@ -56,10 +56,11 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
             particles[iter].velP = vpic;
         }
         else {
-            particles[iter].velP = (1 - alpha) * vpic + alpha * vflip;
+            particles[iter].velP = vpic;
+            //particles[iter].velP = (1 - alpha) * vpic + alpha * vflip;
         }
         //TODO: position update should use vp or vpic?
-        particles[iter].posP += dt * vpic;
+        particles[iter].posP += dt * particles[iter].velP;
     }
 }
 
@@ -102,8 +103,7 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
     }
 
     for (int iter = 0; iter < gridAttrs.size(); iter++){
-        float epsilon = 1e-5;
-        if (gridAttrs[iter].massG > epsilon){
+        if (gridAttrs[iter].massG != 0){
             active_nodes.push_back(iter);
             gridAttrs[iter].velGn = gridAttrs[iter].velGn / gridAttrs[iter].massG ;
         }
