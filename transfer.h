@@ -64,7 +64,7 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
     }
 }
 
-void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const GridInfo gridInfo, std::vector<int>& active_nodes)
+void transferP2G(vector<Particle> particles, vector<GridAttr> &gridAttrs, const GridInfo gridInfo, std::vector<int>& active_nodes)
 {
     int iterationNum = particles.size();
     Matrix3f wp = Matrix3f::Zero();
@@ -94,7 +94,7 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
                         Vector3f plus = 4 * particles[i].BP * (gridNode - index_Space);
                         gridAttrs[index].velGn += wijk * particles[i].massP * (particles[i].velP + plus);
                     } else {
-                        gridAttrs[index].velGn += wijk * particles[i].massP * particles[i].velP;
+                        gridAttrs[index].velGn += wijk * particles[iter].massP * particles[iter].velP;
 
                     }
                 }
@@ -103,7 +103,7 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
     }
 
     for (int iter = 0; iter < gridAttrs.size(); iter++){
-        if (gridAttrs[iter].massG != 0){
+        if (gridAttrs[iter].massG > 1e-7){
             active_nodes.push_back(iter);
             gridAttrs[iter].velGn = gridAttrs[iter].velGn / gridAttrs[iter].massG ;
         }

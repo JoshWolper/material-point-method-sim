@@ -10,7 +10,7 @@ Eigen::Vector3f calcWeights(float index_space, int& baseNode)
 
     Eigen::Vector3f output;
 
-    float d0 = index_space - baseNode; // 0.5<d0<1.5
+    float d0 = index_space - (float)baseNode; // 0.5<d0<1.5
     float z = 1.5 - d0;
     output[0] = 0.5 * z * z;
 
@@ -28,7 +28,7 @@ Eigen::Vector3f calcGradWeights(float index_space, int baseNode)
 {
     Eigen::Vector3f graInt;
 
-    float d0 = index_space - baseNode;
+    float d0 = index_space - (float)baseNode;
     float z = 1.5 - d0;
 
     float d1 = d0 - 1;
