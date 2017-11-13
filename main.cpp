@@ -13,7 +13,7 @@
 #include <ctime>
 
 #define SANITYCHECK false
-#define TIMER false
+#define TIMER true
 int main(){
 
     if (SANITYCHECK){
@@ -33,9 +33,10 @@ int main(){
         float mass = 10;
         float volume = mass/density;
         //std::string filename = "../Models/VeryDenseCube.obj";
-        std::string filename = "../Models/newSparseCube_Nov9.obj";
+        std::string filename = "../Models/OneParticle.obj";
         std::vector<Particle> particles;
         mpmParticleInitialize(filename, particles, mass, volume);
+        std::cout << "mass = " << mass << std::endl << std::flush;
 
         // grid attributes initialize
         float dx = 0.04f;
@@ -62,7 +63,7 @@ int main(){
             Vector3f Lpp2g = computeParticleMomentum(particles);
             transferP2G(particles, gridAttrs, gridInfo, active_nodes);
             Vector3f Lgp2g = computeGridMomentum(gridAttrs, false);
-            cout << "      P2G Momentum Difference: " << (Lgp2g - Lpp2g).transpose() << endl;
+            cout << "particles momentum = " << Lgp2g.transpose() << "\tLpp2g =" << Lpp2g.transpose() << "      P2G Momentum Difference: " << (Lgp2g - Lpp2g).transpose() << endl;
             p2gduration = ( std::clock() - p2gstart ) / (double) CLOCKS_PER_SEC;
 
             // advection part, add forces and update grid velocity
@@ -83,7 +84,7 @@ int main(){
 
             //update deformation gradient here
             updatefstart = std::clock();
-            //UpdateF(dt, gridInfo, gridAttrs, particles);
+            UpdateF(dt, gridInfo, gridAttrs, particles);
             updatefduration = ( std::clock() - updatefstart ) / (double) CLOCKS_PER_SEC;
 
             // transfer from Grid to particles
