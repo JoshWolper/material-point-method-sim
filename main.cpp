@@ -10,32 +10,41 @@
 #include "UpdateF.h"
 #include "computeMomentum.h"
 #include "Test/kernelTest.h"
+#include "Test/derivativeTest.h"
 #include <ctime>
 
 #define SANITYCHECK false
-#define TIMER true
+#define DERIVATIVETEST false
+#define TIMER false
+
 int main(){
 
     if (SANITYCHECK){
         quadraticTest();
     }
+    if(DERIVATIVETEST){
+        derivativeTest();
+    }
     else {
         // MPM simulation parameters setting up
         float dt = 1e-3f; //50 FPS
-        float frameRate = 24;
+        float frameRate = 60;
         int stepsPerFrame = (int)ceil(1 / (dt / (1 / frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
         float alpha = 0;
-        Vector3f gravity = Vector3f(0, -9.8, 0);
+
+        Vector3f gravity = Vector3f(0, -9.8f, 0);
 
         // particles attributes initialize
         float density = 1.0f;
         int numPoints = 3653; //points in sparse cube
         float mass = 10;
         float volume = mass/density;
-        //std::string filename = "../Models/VeryDenseCube.obj";
-        std::string filename = "Models/newSparseCube_Nov9.obj";
+        std::string filename = "../Models/newSparseCube_Nov9.obj";
+        //std::string filename = "../Models/veryDenseCube.obj";
+        //std::string filename = "../Models/OneParticle.obj";
         std::vector<Particle> particles;
         mpmParticleInitialize(filename, particles, mass, volume);
+        //std::cout << "mass = " << mass << std::endl << std::flush;
 
         // grid attributes initialize
         float dx = 0.02f;
@@ -57,12 +66,15 @@ int main(){
             cout << "INFO: Current simulation step is " << step << endl;
             mpmGridReinitialize(gridAttrs, gridInfo);
             std::vector<int> active_nodes;
+
             // transfer from Particles to Grid
             p2gstart = std::clock();
             //Vector3f Lpp2g = computeParticleMomentum(particles);
             transferP2G(particles, gridAttrs, gridInfo, active_nodes);
+
             //Vector3f Lgp2g = computeGridMomentum(gridAttrs, false);
             //cout << "      P2G Momentum Difference: " << (Lgp2g - Lpp2g).transpose() << endl;
+
             p2gduration = ( std::clock() - p2gstart ) / (double) CLOCKS_PER_SEC;
 
             // advection part, add forces and update grid velocity
@@ -91,6 +103,7 @@ int main(){
             //Vector3f Lgg2p = computeGridMomentum(gridAttrs, true);
             transferG2P(particles, gridAttrs, gridInfo, dt, alpha);
             //Vector3f Lpg2p = computeParticleMomentum(particles);
+
             //cout << "      G2P Momentum Difference: " << (Lgg2p - Lpg2p).transpose() << endl;
             g2pduration = ( std::clock() - g2pstart ) / (double) CLOCKS_PER_SEC;
 

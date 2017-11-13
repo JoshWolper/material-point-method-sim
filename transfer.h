@@ -73,6 +73,7 @@ void transferP2G(vector<Particle> particles, vector<GridAttr> &gridAttrs, const 
     int H = gridInfo.H;
     int L = gridInfo.L;
     for(int iter =0; iter < iterationNum; iter++) {
+        int counter = 0;
         Vector3f index_Space = particles[iter].posP / gridInfo.dx;
         QuadraticInterpolation(index_Space, baseNode, wp, dwp);
         for (int i = 0; i < 3; i++) {
@@ -87,12 +88,12 @@ void transferP2G(vector<Particle> particles, vector<GridAttr> &gridAttrs, const 
                     int index = node_i * H * L + node_j * L + node_k;
                     // grid mass transfer
                     gridAttrs[index].massG += wijk * particles[iter].massP;
-
+                    //std::cout << "counter = " << ++counter << "\tindex = " << index << "\twijk = " << wijk << std::endl << std::flush;
                     // grid velocity transfer
                     if (USEAPIC) {
                         Vector3f gridNode = Vector3f(node_i, node_j, node_k);
-                        Vector3f plus = 4 * particles[i].BP * (gridNode - index_Space);
-                        gridAttrs[index].velGn += wijk * particles[i].massP * (particles[i].velP + plus);
+                        Vector3f plus = 4 * particles[iter].BP * (gridNode - index_Space);
+                        gridAttrs[index].velGn += wijk * particles[iter].massP * (particles[iter].velP + plus);
                     } else {
                         gridAttrs[index].velGn += wijk * particles[iter].massP * particles[iter].velP;
 
@@ -103,7 +104,7 @@ void transferP2G(vector<Particle> particles, vector<GridAttr> &gridAttrs, const 
     }
 
     for (int iter = 0; iter < gridAttrs.size(); iter++){
-        if (gridAttrs[iter].massG > 1e-7){
+        if (gridAttrs[iter].massG > 1e-16){
             active_nodes.push_back(iter);
             gridAttrs[iter].velGn = gridAttrs[iter].velGn / gridAttrs[iter].massG ;
         }
