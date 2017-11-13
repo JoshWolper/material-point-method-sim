@@ -8,9 +8,12 @@
 #include "writeframe.h"
 #include "setBoundaryVelocity.h"
 #include "UpdateF.h"
+#include "computeMomentum.h"
 #include "Test/kernelTest.h"
+#include <ctime>
 
 #define SANITYCHECK false
+#define TIMER false
 int main(){
 
     if (SANITYCHECK){
@@ -18,7 +21,7 @@ int main(){
     }
     else {
         // MPM simulation parameters setting up
-        float dt = 2e-3f; //50 FPS
+        float dt = 1e-3f; //50 FPS
         float frameRate = 24;
         int stepsPerFrame = (int)ceil(1 / (dt / (1 / frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
         float alpha = 0;
@@ -27,15 +30,15 @@ int main(){
         // particles attributes initialize
         float density = 1.0f;
         int numPoints = 3653; //points in sparse cube
-        float mass = (((float) 1 / (float) 27) * density) / numPoints;
-        float volume = ((float) 1 / (float) 27) / numPoints;
+        float mass = 10;
+        float volume = mass/density;
         //std::string filename = "../Models/VeryDenseCube.obj";
         std::string filename = "../Models/newSparseCube_Nov9.obj";
         std::vector<Particle> particles;
         mpmParticleInitialize(filename, particles, mass, volume);
 
         // grid attributes initialize
-        float dx = 0.02f;
+        float dx = 0.04f;
         Vector3i simArea = Vector3i::Ones();
         std::vector<GridAttr> gridAttrs;
         GridInfo gridInfo;
@@ -46,29 +49,51 @@ int main(){
         int frame = 0;
         cout << "INFO: >>>>>>>>>>>>>>> Simulation Start! <<<<<<<<<<<<<<< " << endl;
         while (step != 1000) {
+            // set timer
+            std::clock_t start, p2gstart, g2pstart, updatestart, forcestart, updatefstart;
+            double duration, p2gduration, g2pduration, updateduration, forceduration, updatefduration;
+            start = std::clock();
+
             cout << "INFO: Current simulation step is " << step << endl;
             mpmGridReinitialize(gridAttrs, gridInfo);
             std::vector<int> active_nodes;
             // transfer from Particles to Grid
+            p2gstart = std::clock();
+            Vector3f Lpp2g = computeParticleMomentum(particles);
             transferP2G(particles, gridAttrs, gridInfo, active_nodes);
+            Vector3f Lgp2g = computeGridMomentum(gridAttrs, false);
+            cout << "      P2G Momentum Difference: " << (Lgp2g - Lpp2g).transpose() << endl;
+            p2gduration = ( std::clock() - p2gstart ) / (double) CLOCKS_PER_SEC;
 
             // advection part, add forces and update grid velocity
-            addGravity(gridAttrs, active_nodes, gravity);
+            //addGravity(gridAttrs, active_nodes, gravity);
 
             //Add external forces based on our defined energy density function
+            forcestart = std::clock();
             int energyDensityFunction = 0; //define which density function we wish to use!
             addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
+            forceduration = ( std::clock() - forcestart ) / (double) CLOCKS_PER_SEC;
 
+            updatestart = std::clock();
             updateGridvelocity(gridAttrs, active_nodes, dt);
+            updateduration = ( std::clock() - updatestart ) / (double) CLOCKS_PER_SEC;
 
             // boundary collision
-            setBoundaryVelocity(gridAttrs, gridInfo);
+            //setBoundaryVelocity(gridAttrs, gridInfo);
 
             //update deformation gradient here
-            UpdateF(dt, gridInfo, gridAttrs, particles);
+            updatefstart = std::clock();
+            //UpdateF(dt, gridInfo, gridAttrs, particles);
+            updatefduration = ( std::clock() - updatefstart ) / (double) CLOCKS_PER_SEC;
 
             // transfer from Grid to particles
+            g2pstart = std::clock();
+            Vector3f Lgg2p = computeGridMomentum(gridAttrs, true);
             transferG2P(particles, gridAttrs, gridInfo, dt, alpha);
+            Vector3f Lpg2p = computeParticleMomentum(particles);
+            cout << "      G2P Momentum Difference: " << (Lgg2p - Lpg2p).transpose() << endl;
+            g2pduration = ( std::clock() - g2pstart ) / (double) CLOCKS_PER_SEC;
+
 
             if (step % stepsPerFrame == 0) {
                 //Save the particles!
@@ -80,6 +105,16 @@ int main(){
 //                saveStep(particles, step); //call the saving routine
 
             step = step + 1;
+            // output time calculation
+            duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+            if (TIMER){
+                cout << "      P2G time is: " << p2gduration << endl;
+                cout << "      UPV time is: " << updateduration << endl;
+                cout << "      FRC time is: " << forceduration << endl;
+                cout << "      UPF time is: " << updatefduration << endl;
+                cout << "      G2P time is: " << g2pduration << endl;
+                cout << "      overall time is: " << duration << endl;
+            }
         }
     }
 

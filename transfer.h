@@ -25,7 +25,7 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
 
     for(int iter =0; iter < iterationNum; iter++) {
         Vector3f vpic = Vector3f::Zero();
-        Vector3f vflip = Vector3f::Zero();
+        Vector3f vflip = particles[iter].velP;
         Vector3f index_Space = particles[iter].posP/gridInfo.dx;
         QuadraticInterpolation(index_Space, baseNode, wp, dwp);
         for (int i = 0; i < 3; i++) {
@@ -39,8 +39,10 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
                     int node_k = baseNode(2) + k;
                     int index = node_i * H * L + node_j * L + node_k;
 
-                    Vector3f gridIndex = Vector3f(node_i,node_j,node_k);
-                    particles[iter].BP += wijk * gridAttrs[index].velG * (gridIndex.transpose() - index_Space.transpose());
+                    if(USEAPIC) {
+                        Vector3f gridIndex = Vector3f(node_i,node_j,node_k);
+                        particles[iter].BP += wijk * gridAttrs[index].velG * (gridIndex - index_Space).transpose();
+                    }
 
                     // calculate PIC and FLIP part velocity
                     vpic += wijk * gridAttrs[index].velG;
@@ -50,15 +52,14 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
         }
         // update particles velocity and position
 
-        if(!USEAPIC)
-        {
-            particles[iter].velP = (1 - alpha) * vpic + alpha * vflip;
-        }
-        else
-        {
+        if(USEAPIC) {
             particles[iter].velP = vpic;
         }
-
+        else {
+            particles[iter].velP = vpic;
+            //particles[iter].velP = (1 - alpha) * vpic + alpha * vflip;
+        }
+        //TODO: position update should use vp or vpic?
         particles[iter].posP += dt * particles[iter].velP;
     }
 }
@@ -87,14 +88,10 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
                     // grid mass transfer
                     gridAttrs[index].massG += wijk * particles[iter].massP;
 
-                    // calculate APIC things
                     // grid velocity transfer
-                    //TODO APIC transfer should apply here
-                    Vector3f gridNode = Vector3f(node_i, node_j, node_k);
-                    Vector3f index_Space = particles[iter].posP / gridInfo.dx;
-                    Vector3f plus = 4 * particles[i].BP * (gridNode - index_Space);
-
                     if (USEAPIC) {
+                        Vector3f gridNode = Vector3f(node_i, node_j, node_k);
+                        Vector3f plus = 4 * particles[i].BP * (gridNode - index_Space);
                         gridAttrs[index].velGn += wijk * particles[i].massP * (particles[i].velP + plus);
                     } else {
                         gridAttrs[index].velGn += wijk * particles[i].massP * particles[i].velP;

@@ -25,9 +25,7 @@ void mpmParticleInitialize(std::string filename, std::vector<Particle> &particle
         particles[i].volumeP = volume;
         particles[i].BP = Matrix3f::Zero();
         particles[i].F = Matrix3f::Identity();
-        particles[i].F(0,0) = 1.01; //TODO: change this back to identity eventually!
-        particles[i].F(1,1) = 1.01;
-        particles[i].F(2,2) = 1.01;
+        particles[i].F = particles[i].F * 1.05;
         /*particles[i].F(0,0) = 1.0; //TODO: change this back to identity eventually!
         particles[i].F(0,1) = 2.0;
         particles[i].F(0,2) = 3.0;
@@ -53,7 +51,7 @@ void mpmGridInitialize(std::vector<GridAttr> &gridAttr, GridInfo &gridInfo, Vect
     // Initialize grid attribute
     gridAttr.resize(gridInfo.gridSize);
     for (int i = 0; i < gridInfo.gridSize; i++){
-        gridAttr[i].massG = 0.f;
+        gridAttr[i].massG = 0;
         gridAttr[i].force = Vector3f::Zero();
         gridAttr[i].velG = Vector3f::Zero();
         gridAttr[i].velGn = Vector3f::Zero();
@@ -63,7 +61,7 @@ void mpmGridInitialize(std::vector<GridAttr> &gridAttr, GridInfo &gridInfo, Vect
 
 void mpmGridReinitialize(std::vector<GridAttr> &gridAttr, GridInfo &gridInfo){
     for (int i = 0; i < gridInfo.gridSize; i++){
-        gridAttr[i].massG = 0.f;
+        gridAttr[i].massG = 0;
         gridAttr[i].force = Vector3f::Zero();
         gridAttr[i].velG = Vector3f::Zero();
         gridAttr[i].velGn = Vector3f::Zero();

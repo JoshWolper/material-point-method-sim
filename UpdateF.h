@@ -27,7 +27,7 @@ using namespace Eigen;
 //target: update the Fp inside the particle
 void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs, vector<Particle>& particles)
 {
-
+    int c = 1;
     int particleNum = particles.size();
 
     for(int loop = 0; loop < particleNum; loop++)
@@ -56,12 +56,26 @@ void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs
                                              (1/gridInfo.dx) * wp(0,tempNodeLength(0))*wp(1,tempNodeLength(1))*dwp(2,tempNodeLength(2)));
 
                     Vector3f tempVel = gridAttrs[tempNodeIndex].velG;
-                    grad_vp += tempVel * dwip.transpose();
+                    //TODO: bottleneck
+                    Matrix3f test;
+
+                    test(0,0) = tempVel(0) * dwip(0);
+                    test(0,1) = tempVel(0) * dwip(1);
+                    test(0,2) = tempVel(0) * dwip(2);
+                    test(1,0) = tempVel(1) * dwip(0);
+                    test(1,1) = tempVel(1) * dwip(1);
+                    test(1,2) = tempVel(1) * dwip(2);
+                    test(2,0) = tempVel(2) * dwip(0);
+                    test(2,1) = tempVel(2) * dwip(1);
+                    test(2,2) = tempVel(2) * dwip(2);
+                    //grad_vp += tempVel * dwip.transpose();
+                    grad_vp += test;
                 }
             }
         }
 
-        Matrix3f newFp = Fp + timeStep * grad_vp * Fp;
+        Matrix3f newFp;
+        newFp = Fp + timeStep * grad_vp * Fp;
         particles[loop].F = newFp;
     }
 
