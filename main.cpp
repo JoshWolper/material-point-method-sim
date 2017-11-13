@@ -30,7 +30,7 @@ int main(){
         float mass = (((float) 1 / (float) 27) * density) / numPoints;
         float volume = ((float) 1 / (float) 27) / numPoints;
         //std::string filename = "../Models/VeryDenseCube.obj";
-        std::string filename = "Models/newSparseCube_Nov9.obj";
+        std::string filename = "../Models/newSparseCube_Nov9.obj";
         std::vector<Particle> particles;
         mpmParticleInitialize(filename, particles, mass, volume);
 
