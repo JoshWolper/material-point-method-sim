@@ -5,7 +5,7 @@
 #include "constitutiveModel.h"
 #include <cmath>
 
-void corotatedPiolaDouble(const Matrix3d& defGrad, double& energy, Eigen::Matrix3d& piola){
+void corotatedPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& piola){
 
     double E = 100;
     double nu = 0.3;
@@ -79,7 +79,7 @@ void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
 void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
-    float E = 500000;
+    float E = 10;
     float nu = 0.3;
 
     float mu = E / ((float)2 * ((float)1 + nu));
@@ -96,14 +96,12 @@ void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
     float J = defGrad.determinant();
 
-    piola = (mu * (defGrad - defGrad.transpose())) + (lambda * log(J) * defGrad.transpose().inverse());
+    piola = (mu * (defGrad - defGrad.transpose().inverse())) + (lambda * log(J) * defGrad.transpose().inverse());
 
     return;
 }
 
 void neoHookeanPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& piola){
-
-    //TODO: pass derivative test with neohookean!
 
     double E = 500000;
     double nu = 0.3;
@@ -120,19 +118,19 @@ void neoHookeanPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& pi
 
     Matrix3d R = U * V.transpose();
 
-    float J = defGrad.determinant();
+    double J = defGrad.determinant();
 
     piola = (mu * (defGrad - defGrad.transpose().inverse())) + (lambda * log(J) * defGrad.transpose().inverse());
 
     Matrix3d fTf = defGrad.transpose() * defGrad;
-    energy = (mu / (double)2) * (fTf.trace() - (double)3) - (mu * log(J)) + ((lambda/(double)2) * log(J) * log(J));
+    energy = ((mu / (double)2) * (fTf.trace() - (double)3)) - (mu * log(J)) + ((lambda/(double)2) * log(J) * log(J));
 
     return;
 }
 
 void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
-    float E = 500000;
+    float E = 10;
     float nu = 0.3;
 
     float mu = E / ((float)2 * ((float)1 + nu));

@@ -25,12 +25,12 @@ void derivativeTest()
         TM F1 = F0 + epsilon * dF;
         TM piola0, piola1;
         T energy0, energy1;
-        //corotatedPiola(F0, energy0, piola0);
-        //corotatedPiola(F1, energy1, piola1);
+        //corotatedPiolaDouble(F0, energy0, piola0);
+        //corotatedPiolaDouble(F1, energy1, piola1);
         neoHookeanPiolaDouble(F0, energy0, piola0);
         neoHookeanPiolaDouble(F1, energy1, piola1);
-        //stVernantPiola(F0, energy0, piola0);
-        //stVernantPiola(F1, energy1, piola1);
+        //stVernantPiolaDouble(F0, energy0, piola0);
+        //stVernantPiolaDouble(F1, energy1, piola1);
         T contraction = 0;
         for(int row = 0; row < dim; ++row)
             for(int col = 0; col < dim; ++col)

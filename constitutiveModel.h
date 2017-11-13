@@ -10,6 +10,8 @@
 
 void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola);
 
+void corotatedPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& piola);
+
 void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola);
 
 void neoHookeanPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& piola);

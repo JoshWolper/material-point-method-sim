@@ -107,7 +107,7 @@ void transferP2G(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
         if (gridAttrs[iter].massG > 1e-16){
             active_nodes.push_back(iter);
             gridAttrs[iter].velGn = gridAttrs[iter].velGn / gridAttrs[iter].massG ;
-            std::cout << "mass=" << gridAttrs[iter].massG <<  "\tvel[" << iter << "] = " << gridAttrs[iter].velGn.transpose() << std::endl << std::flush;
+            //std::cout << "mass=" << gridAttrs[iter].massG <<  "\tvel[" << iter << "] = " << gridAttrs[iter].velGn.transpose() << std::endl << std::flush;
         }
         else{
             gridAttrs[iter].velGn = Vector3f::Zero();
