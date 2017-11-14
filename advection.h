@@ -31,10 +31,10 @@ void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, Gri
 
         //TODO: small bottleneck
         switch(energyDensityFunction){
-            case 0: corotatedPiola(defGrad, piola);
-            case 1: neoHookeanPiola(defGrad, piola);
-            case 2: stVernantPiola(defGrad, piola);
-            default: corotatedPiola(defGrad, piola); //default should just be the corotated model
+            case 0: corotatedPiola(defGrad, piola); break;
+            case 1: neoHookeanPiola(defGrad, piola); break;
+            case 2: stVernantPiola(defGrad, piola); break;
+            default: corotatedPiola(defGrad, piola); break; //default should just be the corotated model
         }
 
         Vector3f pos = particles[i].posP / gridInfo.dx;

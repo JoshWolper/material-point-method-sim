@@ -4,10 +4,13 @@
 
 #include "constitutiveModel.h"
 #include <cmath>
+#include <iostream>
+
+using namespace std;
 
 void corotatedPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& piola){
 
-    double E = 100;
+    double E = 50;
     double nu = 0.3;
 
     double lambda = E * nu / (((double)1 + nu) * ((double)1 - (double)2 * nu));
@@ -40,7 +43,9 @@ void corotatedPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& pio
 
 void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
-    float E = 10;
+    //cout << "Using Corotated Model!!" << endl;
+
+    float E = 50;
     float nu = 0.3;
 
     float lambda = E * nu / (((float)1 + nu) * ((float)1 - (float)2 * nu));
@@ -79,7 +84,9 @@ void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
 void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
-    float E = 10;
+    //cout << "Using NeoHookean Model!!" << endl;
+
+    float E = 50;
     float nu = 0.3;
 
     float mu = E / ((float)2 * ((float)1 + nu));
@@ -103,7 +110,7 @@ void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
 void neoHookeanPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& piola){
 
-    double E = 500000;
+    double E = 50;
     double nu = 0.3;
 
     double mu = E / ((double)2 * ((double)1 + nu));
@@ -130,7 +137,9 @@ void neoHookeanPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& pi
 
 void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
-    float E = 10;
+    //cout << "Using St Vernant Model!!" << endl;
+
+    float E = 50;
     float nu = 0.3;
 
     float mu = E / ((float)2 * ((float)1 + nu));
@@ -162,7 +171,7 @@ void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
 void stVernantPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& piola){
 
-    double E = 500000;
+    double E = 50;
     double nu = 0.3;
 
     double mu = E / ((double)2 * ((double)1 + nu));
@@ -177,7 +186,7 @@ void stVernantPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& pio
 
     Matrix3d R = U * V.transpose();
 
-    float J = defGrad.determinant();
+    double J = defGrad.determinant();
 
     Matrix3d logSigma = Matrix3d::Zero();
     logSigma(0,0) = log(sigma(0,0));
