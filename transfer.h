@@ -56,11 +56,12 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
             particles[iter].velP = vpic;
         }
         else {
-            particles[iter].velP = vpic;
-            //particles[iter].velP = (1 - alpha) * vpic + alpha * vflip;
+
+            //If want PIC alone, set alpha = 0
+            particles[iter].velP = (1 - alpha) * vpic + alpha * vflip;
         }
-        //TODO: position update should use vp or vpic?
-        particles[iter].posP += dt * particles[iter].velP;
+
+        particles[iter].posP += dt * vpic;
     }
 }
 
