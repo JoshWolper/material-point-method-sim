@@ -57,7 +57,7 @@ int main(){
         int step = 0;
         int frame = 0;
         cout << "INFO: >>>>>>>>>>>>>>> Simulation Start! <<<<<<<<<<<<<<< " << endl;
-        while (step != 1000) {
+        while (step != 1500) {
             // set timer
             std::clock_t start, p2gstart, g2pstart, updatestart, forcestart, updatefstart;
             double duration, p2gduration, g2pduration, updateduration, forceduration, updatefduration;
@@ -82,7 +82,7 @@ int main(){
 
             //Add external forces based on our defined energy density function
             forcestart = std::clock();
-            int energyDensityFunction = 0; //define which density function we wish to use!
+            int energyDensityFunction = 1; //define which density function we wish to use!
             addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
             forceduration = ( std::clock() - forcestart ) / (double) CLOCKS_PER_SEC;
 
