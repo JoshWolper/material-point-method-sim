@@ -11,7 +11,7 @@
 
 using namespace Eigen;
 
-void mpmParticleInitialize(std::string filename, std::vector<Particle> &particles, float mass, float volume){
+void mpmParticleInitialize(std::string filename, std::vector<Particle> &particles, float mass, float volume, Vector3f velocity){
     std::vector<Vector3f> xp;
     readtxt(filename, xp);
     int part_number = xp.size();
@@ -20,7 +20,7 @@ void mpmParticleInitialize(std::string filename, std::vector<Particle> &particle
     particles.resize(part_number);
     for (int i = 0; i < part_number; i++){
         particles[i].posP = xp[i];
-        particles[i].velP = Vector3f::Zero();
+        particles[i].velP = velocity;
         particles[i].massP = mass;
         particles[i].volumeP = volume;
         particles[i].BP = Matrix3f::Zero();
