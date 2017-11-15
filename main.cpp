@@ -30,7 +30,7 @@ int main(){
         float dt = 1e-3f; //50 FPS
         float frameRate = 60;
         int stepsPerFrame = (int)ceil(1 / (dt / (1 / frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
-        float alpha = 0;
+        float alpha = 0.95;
 
         Vector3f gravity = Vector3f(0, -9.8f, 0);
 
@@ -39,12 +39,12 @@ int main(){
         int numPoints = 3653; //points in sparse cube
         float mass = 10;
         float volume = mass/density;
-        std::string filename = "Models/newSparseCube_Nov9.obj";
+        std::string filename = "../Models/newSparseCube_Nov9.obj";
         //std::string filename = "../Models/veryDenseCube.obj";
         //std::string filename = "../Models/OneParticle.obj";
         std::vector<Particle> particles;
         mpmParticleInitialize(filename, particles, mass, volume);
-        //std::cout << "mass = " << mass << std::endl << std::flush;
+        //std::cout << "mass o= " << mass << std::endl << std::flush;
 
         // grid attributes initialize
         float dx = 0.02f;
@@ -82,7 +82,7 @@ int main(){
 
             //Add external forces based on our defined energy density function
             forcestart = std::clock();
-            int energyDensityFunction = 0; //define which density function we wish to use!
+            int energyDensityFunction = 2; //define which density function we wish to use!
             addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
             forceduration = ( std::clock() - forcestart ) / (double) CLOCKS_PER_SEC;
 
