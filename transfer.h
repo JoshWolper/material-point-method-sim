@@ -10,7 +10,7 @@
 #include "SVD.h"
 #include <math.h>
 
-#define USEAPIC false
+#define USEAPIC true
 
 using namespace std;
 
@@ -24,6 +24,7 @@ void transferG2P(vector<Particle>& particles, vector<GridAttr>& gridAttrs, const
     int L = gridInfo.L;
 
     for(int iter =0; iter < iterationNum; iter++) {
+        particles[iter].BP = Matrix3f::Zero();
         Vector3f vpic = Vector3f::Zero();
         Vector3f vflip = particles[iter].velP;
         Vector3f index_Space = particles[iter].posP/gridInfo.dx;
@@ -74,7 +75,6 @@ void transferP2G(vector<Particle> particles, vector<GridAttr> &gridAttrs, const 
     int H = gridInfo.H;
     int L = gridInfo.L;
     for(int iter =0; iter < iterationNum; iter++) {
-        int counter = 0;
         Vector3f index_Space = particles[iter].posP / gridInfo.dx;
         QuadraticInterpolation(index_Space, baseNode, wp, dwp);
         for (int i = 0; i < 3; i++) {
