@@ -32,19 +32,22 @@ int main(){
         int stepsPerFrame = (int)ceil(1 / (dt / (1 / frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
         float alpha = 0.95;
 
-        Vector3f gravity = Vector3f(0, -9.8f, 0);
+        Vector3f gravity = Vector3f(0, 0, 0);
 
         // particles attributes initialize
         float density = 1.0f;
-        int numPoints = 3653; //points in sparse cube
         float mass = 10;
         float volume = mass/density;
-        std::string filename = "../Models/newSparseCube_Nov9.obj";
-        //std::string filename = "../Models/veryDenseCube.obj";
-        //std::string filename = "../Models/OneParticle.obj";
-        std::vector<Particle> particles;
-        mpmParticleInitialize(filename, particles, mass, volume);
-        //std::cout << "mass o= " << mass << std::endl << std::flush;
+        std::string filenameLeft = "Models/smallLeftCube.obj";
+        std::string filenameRight = "Models/smallRightCube.obj";
+        std::vector<Particle> particlesLeft;
+        std::vector<Particle> particlesRight;
+        Vector3f velocityLeft = Vector3f(0.7f, 0.7f, 0.f);
+        Vector3f velocityRight = Vector3f(-0.7f, 0.7f, 0.f);
+        mpmParticleInitialize(filenameLeft, particlesLeft, mass, volume, velocityLeft);
+        mpmParticleInitialize(filenameRight, particlesRight, mass, volume, velocityRight);
+        particlesLeft.insert(particlesLeft.end(), particlesRight.begin(), particlesRight.end());
+        std::vector<Particle> particles = particlesLeft;
 
         // grid attributes initialize
         float dx = 0.02f;
