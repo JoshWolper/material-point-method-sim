@@ -25,6 +25,8 @@ void mpmParticleInitialize(std::string filename, std::vector<Particle> &particle
         particles[i].volumeP = volume;
         particles[i].BP = Matrix3f::Zero();
         particles[i].F = Matrix3f::Identity();
+        particles[i].Fe = Matrix3f::Identity();
+        particles[i].Fp = Matrix3f::Identity();
     }
 }
 

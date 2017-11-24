@@ -79,7 +79,6 @@ void corotatedPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 //    JFinvT(2, 2) = defGrad(0, 0) * defGrad(1, 1) - defGrad(0, 1) * defGrad(1, 0);
     piola = (2 * mu * (defGrad - R)) + (lambda * (J-1) * J * (defGrad.transpose().inverse()));
 //    piola = (2 * mu * (defGrad - R)) + (lambda * (J-1) * JFinvT);
-    return;
 }
 
 void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
@@ -105,7 +104,6 @@ void neoHookeanPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
 
     piola = (mu * (defGrad - defGrad.transpose().inverse())) + (lambda * log(J) * defGrad.transpose().inverse());
 
-    return;
 }
 
 void neoHookeanPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& piola){
@@ -132,7 +130,6 @@ void neoHookeanPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& pi
     Matrix3d fTf = defGrad.transpose() * defGrad;
     energy = ((mu / (double)2) * (fTf.trace() - (double)3)) - (mu * log(J)) + ((lambda/(double)2) * log(J) * log(J));
 
-    return;
 }
 
 void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
@@ -166,7 +163,6 @@ void stVernantPiola(Matrix3f defGrad, Eigen::Matrix3f& piola){
     //now calculate actual P!
     piola = U * piolaSingular * V.transpose();
 
-    return;
 }
 
 void stVernantPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& piola){
@@ -200,5 +196,36 @@ void stVernantPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& pio
 
     energy = (mu * (logSigma * logSigma).trace()) + ((lambda/(double)2) * (logSigma.trace()) * logSigma.trace());
 
-    return;
+}
+
+void snowPiola(Matrix3f defGrad, Matrix3f Fp, Matrix3f Fe, Matrix3f& piola){
+
+    // initla Lame parameters
+    float E = 5;
+    float nu = 0.2;
+    float lambda = E * nu / (((float)1 + nu) * ((float)1 - (float)2 * nu));
+    float mu = E / ((float)2 * ((float)1 + nu));
+
+    float hc = 10;
+
+    float Jp = Fp.determinant();
+    float Je = Fe.determinant();
+
+    float muFp = mu*exp(10*(1-Jp));
+    float lambdaFp = lambda*exp(10*(1-Jp));
+
+    SVDResult svdResult = SingularValueDecomposition3D(Fe);
+
+    Matrix3f Ue, sigmae, Ve;
+    Ue = svdResult.U;
+    sigmae = svdResult.SIGMA;
+    Ve= svdResult.V;
+
+    //cout << "U: " << U << endl;
+    //cout << "Sigma: " << sigma << endl;
+    //cout << "V: " << V << endl;
+
+    Matrix3f Re = Ue * Ve.transpose();
+
+    piola = (2 * muFp * (Fe - Re)) + (lambdaFp * (Je-1) * Je * (Fe.transpose().inverse()));
 }

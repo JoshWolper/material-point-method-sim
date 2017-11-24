@@ -30,6 +30,8 @@ struct Particle{
     Vector3f velP;
     Matrix3f BP;
     Matrix3f F;
+    Matrix3f Fp;
+    Matrix3f Fe;
 };
 
 struct GridAttr{

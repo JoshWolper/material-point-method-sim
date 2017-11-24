@@ -13,6 +13,7 @@
 #include "Eigen/LU"
 #include "global.h"
 #include "interpolation.h"
+#include "SVD.h"
 
 using namespace std;
 using namespace Eigen;
@@ -25,9 +26,8 @@ using namespace Eigen;
 //this is the kernel function that only process one Fp update
 //it is different from the MATLAB version of update all the Fps together
 //target: update the Fp inside the particle
-void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs, vector<Particle>& particles)
+void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs, vector<Particle>& particles, int energyDensityFunction)
 {
-    int c = 1;
     int particleNum = particles.size();
 
     for(int loop = 0; loop < particleNum; loop++)
@@ -38,7 +38,7 @@ void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs
         Matrix3f dwp;
         QuadraticInterpolation(particlePos, baseNode, wp, dwp);
 
-        Matrix3f Fp = particles[loop].F;
+        Matrix3f defGrad = particles[loop].F;
 
         Matrix3f grad_vp = Matrix3f::Zero();
 
@@ -74,9 +74,31 @@ void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs
             }
         }
 
-        Matrix3f newFp;
-        newFp = Fp + timeStep * grad_vp * Fp;
-        particles[loop].F = newFp;
+        Matrix3f newdefGrad;
+        Matrix3f newFe, newFp, Ue, sigmae, Ve;
+        newdefGrad = defGrad + timeStep * grad_vp * defGrad;
+        if (energyDensityFunction == 3){
+            float thetaC = 1.5e-2;
+            float thetaS = 7.5e-3;
+
+            Matrix3f Fe = particles[loop].Fe;
+            newFe = Fe + timeStep * grad_vp * Fe;
+            SVDResult svdResult = SingularValueDecomposition3D(newFe);
+
+            Matrix3f Ue, sigmae, Ve;
+            Ue = svdResult.U;
+            sigmae = svdResult.SIGMA;
+            Ve= svdResult.V;
+
+            for (int i = 0; i < 3; i++){
+                sigmae(i,i) = max(1-thetaC, min(sigmae(i,i), 1+thetaS));
+            }
+
+            particles[loop].Fe = Ue * sigmae * Ve.transpose();
+            particles[loop].Fp = Ve * sigmae.inverse() * Ue.transpose() * newdefGrad;
+
+        }
+        particles[loop].F = newdefGrad;
     }
 
 }

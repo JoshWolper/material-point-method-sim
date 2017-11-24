@@ -33,7 +33,7 @@ void saveFrame(vector<Particle> particles, int frame){
     ofstream outfile;
 
     //later we'll want a second parameter, timeStep to make it spit out differently named files!
-    string filename = "Output/frame" + to_string(frame) + ".obj";
+    string filename = "../Output/frame" + to_string(frame) + ".obj";
 
     outfile.open(filename);
 

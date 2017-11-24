@@ -27,19 +27,19 @@ int main(){
     }
     else {
         // MPM simulation parameters setting up
-        float dt = 1e-3f; //50 FPS
+        float dt = 5e-4f; //50 FPS
         float frameRate = 60;
         int stepsPerFrame = (int)ceil(1 / (dt / (1 / frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
         float alpha = 0.95;
 
-        Vector3f gravity = Vector3f(0, 0, 0);
+        Vector3f gravity = Vector3f(0, -10, 0);
 
         // particles attributes initialize
         float density = 1.0f;
         float mass = 10;
         float volume = mass/density;
-        std::string filenameLeft = "Models/smallLeftCube.obj";
-        std::string filenameRight = "Models/smallRightCube.obj";
+        std::string filenameLeft = "../Models/smallLeftCube.obj";
+        std::string filenameRight = "../Models/smallRightCube.obj";
         std::vector<Particle> particlesLeft;
         std::vector<Particle> particlesRight;
         Vector3f velocityLeft = Vector3f(0.7f, 0.7f, 0.f);
@@ -48,6 +48,10 @@ int main(){
         mpmParticleInitialize(filenameRight, particlesRight, mass, volume, velocityRight);
         particlesLeft.insert(particlesLeft.end(), particlesRight.begin(), particlesRight.end());
         std::vector<Particle> particles = particlesLeft;
+//        std::string filenameLeft = "../Models/newSparseCube_Nov9.obj";
+//        std::vector<Particle> particles;
+//        Vector3f velocity = Vector3f(0.f, 0.f, 0.f);
+//        mpmParticleInitialize(filenameLeft, particles, mass, volume, velocity);
 
         // grid attributes initialize
         float dx = 0.02f;
@@ -85,7 +89,7 @@ int main(){
 
             //Add external forces based on our defined energy density function
             forcestart = std::clock();
-            int energyDensityFunction = 2; //define which density function we wish to use!
+            int energyDensityFunction = 3; //define which density function we wish to use!
             addGridForces(gridAttrs, particles, gridInfo, energyDensityFunction);
             forceduration = ( std::clock() - forcestart ) / (double) CLOCKS_PER_SEC;
 
@@ -98,7 +102,7 @@ int main(){
 
             //update deformation gradient here
             updatefstart = std::clock();
-            UpdateF(dt, gridInfo, gridAttrs, particles);
+            UpdateF(dt, gridInfo, gridAttrs, particles, energyDensityFunction);
             updatefduration = ( std::clock() - updatefstart ) / (double) CLOCKS_PER_SEC;
 
             // transfer from Grid to particles
