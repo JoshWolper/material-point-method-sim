@@ -90,6 +90,7 @@ void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs
             sigmae = svdResult.SIGMA;
             Ve= svdResult.V;
 
+            // clamp singular values
             for (int i = 0; i < 3; i++){
                 sigmae(i,i) = max(1-thetaC, min(sigmae(i,i), 1+thetaS));
             }
