@@ -11,6 +11,7 @@
 #include "computeMomentum.h"
 #include "Test/kernelTest.h"
 #include "Test/derivativeTest.h"
+#include "AnalyticCollisionObject.h"
 #include <ctime>
 
 #define SANITYCHECK false
@@ -27,7 +28,7 @@ int main(){
     }
     else {
         // MPM simulation parameters setting up
-        float dt = 5e-4f; //50 FPS
+        float dt = 1e-4f; //50 FPS
         float frameRate = 60;
         int stepsPerFrame = (int)ceil(1 / (dt / (1 / frameRate))); //calculate how many steps per frame we should have based on our desired frame rate and dt!
         float alpha = 0.95;
@@ -38,20 +39,20 @@ int main(){
         float density = 1.0f;
         float mass = 10;
         float volume = mass/density;
-        std::string filenameLeft = "../Models/smallLeftCube.obj";
-        std::string filenameRight = "../Models/smallRightCube.obj";
-        std::vector<Particle> particlesLeft;
-        std::vector<Particle> particlesRight;
-        Vector3f velocityLeft = Vector3f(0.7f, 0.7f, 0.f);
-        Vector3f velocityRight = Vector3f(-0.7f, 0.7f, 0.f);
-        mpmParticleInitialize(filenameLeft, particlesLeft, mass, volume, velocityLeft);
-        mpmParticleInitialize(filenameRight, particlesRight, mass, volume, velocityRight);
-        particlesLeft.insert(particlesLeft.end(), particlesRight.begin(), particlesRight.end());
-        std::vector<Particle> particles = particlesLeft;
-//        std::string filenameLeft = "../Models/newSparseCube_Nov9.obj";
-//        std::vector<Particle> particles;
-//        Vector3f velocity = Vector3f(0.f, 0.f, 0.f);
-//        mpmParticleInitialize(filenameLeft, particles, mass, volume, velocity);
+//        std::string filenameLeft = "../Models/smallLeftCube.obj";
+//        std::string filenameRight = "../Models/smallRightCube.obj";
+//        std::vector<Particle> particlesLeft;
+//        std::vector<Particle> particlesRight;
+//        Vector3f velocityLeft = Vector3f(0.f, 0.f, 0.f);
+//        Vector3f velocityRight = Vector3f(-0.f, 0.f, 0.f);
+//        mpmParticleInitialize(filenameLeft, particlesLeft, mass, volume, velocityLeft);
+//        mpmParticleInitialize(filenameRight, particlesRight, mass, volume, velocityRight);
+//        particlesLeft.insert(particlesLeft.end(), particlesRight.begin(), particlesRight.end());
+//        std::vector<Particle> particles = particlesLeft;
+        std::string filenameLeft = "../Models/newSparseCube_Nov9.obj";
+        std::vector<Particle> particles;
+        Vector3f velocity = Vector3f(0.f, 0.f, 0.f);
+        mpmParticleInitialize(filenameLeft, particles, mass, volume, velocity);
 
         // grid attributes initialize
         float dx = 0.02f;
@@ -64,13 +65,13 @@ int main(){
         int step = 0;
         int frame = 0;
         cout << "INFO: >>>>>>>>>>>>>>> Simulation Start! <<<<<<<<<<<<<<< " << endl;
-        while (step != 1500) {
+        while (frame != 40) {
             // set timer
             std::clock_t start, p2gstart, g2pstart, updatestart, forcestart, updatefstart;
             double duration, p2gduration, g2pduration, updateduration, forceduration, updatefduration;
             start = std::clock();
 
-            cout << "INFO: Current simulation step is " << step << endl;
+            //cout << "INFO: Current simulation step is " << step << endl;
             mpmGridReinitialize(gridAttrs, gridInfo);
             std::vector<int> active_nodes;
 
@@ -99,6 +100,10 @@ int main(){
 
             // boundary collision
             setBoundaryVelocity(gridAttrs, gridInfo);
+            Vector3f center = Vector3f(0.5f, 0.f, 0.5f);
+            float radius = 0.2f;
+            float friction  = 0.f;
+            SphereGridCollision(gridAttrs, active_nodes, center, radius, friction, dx);
 
             //update deformation gradient here
             updatefstart = std::clock();
@@ -110,6 +115,7 @@ int main(){
             //Vector3f Lgg2p = computeGridMomentum(gridAttrs, true);
             transferG2P(particles, gridAttrs, gridInfo, dt, alpha);
             //Vector3f Lpg2p = computeParticleMomentum(particles);
+            SphereParticleCollision(particles, center, friction, radius);
 
             //cout << "      G2P Momentum Difference: " << (Lgg2p - Lpg2p).transpose() << endl;
             g2pduration = ( std::clock() - g2pstart ) / (double) CLOCKS_PER_SEC;

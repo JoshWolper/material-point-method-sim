@@ -42,11 +42,17 @@ void mpmGridInitialize(std::vector<GridAttr> &gridAttr, GridInfo &gridInfo, Vect
     std::cout << "INFO: Grid number is " << gridInfo.gridSize << std::endl;
     // Initialize grid attribute
     gridAttr.resize(gridInfo.gridSize);
-    for (int i = 0; i < gridInfo.gridSize; i++){
-        gridAttr[i].massG = 0;
-        gridAttr[i].force = Vector3f::Zero();
-        gridAttr[i].velG = Vector3f::Zero();
-        gridAttr[i].velGn = Vector3f::Zero();
+    for (int i = 0; i < gridInfo.W; i++){
+        for (int j = 0; j < gridInfo.H; j++){
+            for (int k = 0; k < gridInfo.L; k++){
+                int index = i * gridInfo.H * gridInfo.L + j * gridInfo.L + k;
+                gridAttr[index].massG = 0;
+                gridAttr[index].force = Vector3f::Zero();
+                gridAttr[index].velG = Vector3f::Zero();
+                gridAttr[index].velGn = Vector3f::Zero();
+                gridAttr[index].Xi = Vector3f(i,j,k);
+            }
+        }
     }
     std::cout << "INFO: >>>>>>>>>>>>>>> MPM Initialization Ends <<<<<<<<<<<<<<< " << std::endl;
 }

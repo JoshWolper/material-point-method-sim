@@ -78,7 +78,7 @@ void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs
         Matrix3f newFe, newFp, Ue, sigmae, Ve;
         newdefGrad = defGrad + timeStep * grad_vp * defGrad;
         if (energyDensityFunction == 3){
-            float thetaC = 1.5e-2;
+            float thetaC = 2.5e-2;
             float thetaS = 7.5e-3;
 
             Matrix3f Fe = particles[loop].Fe;
@@ -90,7 +90,6 @@ void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs
             sigmae = svdResult.SIGMA;
             Ve= svdResult.V;
 
-            // clamp singular values
             for (int i = 0; i < 3; i++){
                 sigmae(i,i) = max(1-thetaC, min(sigmae(i,i), 1+thetaS));
             }

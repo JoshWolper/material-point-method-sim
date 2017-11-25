@@ -39,6 +39,7 @@ struct GridAttr{
     Vector3f velG;//velocity at t_n+1
     Vector3f velGn;//velocity at t_n
     Vector3f force;
+    Vector3f Xi;
 };
 
 struct GridInfo{
