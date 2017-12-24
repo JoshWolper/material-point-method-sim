@@ -4,7 +4,7 @@
 
 #include "AnalyticCollisionObject.h"
 
-#define STICKY false
+#define STICKY true
 
 void SphereGridCollision(std::vector<GridAttr>& gridAttr, const std::vector<int>& active_nodes, const Vector3f& center, float radius, float friction, float dx){
     // initialize sphere level set

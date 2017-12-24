@@ -70,7 +70,14 @@ void addGridForces(vector<GridAttr>& gridAttrs, vector<Particle>& particles, Gri
                     //cout << "GradWip: " << gradWip << endl;
 
                     //TODO: bottleneck
-                    Vector3f f_i = -1 * volume * piola * defGrad.transpose() * gradWip; //calc force update
+                    Vector3f f_i = Vector3f::Zero();
+                    if (energyDensityFunction != 3){
+                        f_i = -1 * volume * piola * defGrad.transpose() * gradWip; //calc force update
+                    }
+                    else {
+                        f_i = -1 * volume * piola * Fe.transpose() * gradWip; //calc force update
+                    }
+
 
                     //cout << "f_i: " << f_i.transpose() << endl;
 
