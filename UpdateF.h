@@ -79,7 +79,7 @@ void UpdateF(float timeStep, const GridInfo gridInfo, vector<GridAttr> gridAttrs
         newdefGrad = defGrad + timeStep * grad_vp * defGrad;
         if (energyDensityFunction == 3){
             float thetaC = 2.5e-2;
-            float thetaS = 7.5e-3;
+            float thetaS = 5.5e-3;
 
             Matrix3f Fe = particles[loop].Fe;
             newFe = Fe + timeStep * grad_vp * Fe;

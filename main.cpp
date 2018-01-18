@@ -49,7 +49,7 @@ int main(){
 //        mpmParticleInitialize(filenameRight, particlesRight, mass, volume, velocityRight);
 //        particlesLeft.insert(particlesLeft.end(), particlesRight.begin(), particlesRight.end());
 //        std::vector<Particle> particles = particlesLeft;
-        std::string filenameLeft = "../Models/newSparseCube_Nov9.obj";
+        std::string filenameLeft = "../Models/translatedRandomCube_10000.obj";
         std::vector<Particle> particles;
         Vector3f velocity = Vector3f(0.f, 0.f, 0.f);
         mpmParticleInitialize(filenameLeft, particles, mass, volume, velocity);
