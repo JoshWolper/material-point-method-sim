@@ -201,7 +201,7 @@ void stVernantPiolaDouble(Matrix3d defGrad, double& energy, Eigen::Matrix3d& pio
 void snowPiola(Matrix3f defGrad, Matrix3f Fp, Matrix3f Fe, Matrix3f& piola){
 
     // initla Lame parameters
-    float E = 5;
+    float E = 50;
     float nu = 0.2;
     float lambda = E * nu / (((float)1 + nu) * ((float)1 - (float)2 * nu));
     float mu = E / ((float)2 * ((float)1 + nu));
